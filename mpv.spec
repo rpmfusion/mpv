@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.1.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -13,6 +13,7 @@ BuildRequires:  aalib-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  ffmpeg-devel
+BuildRequires:  ffmpeg-libs
 BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libdvdnav-devel
@@ -68,6 +69,9 @@ install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.con
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %changelog
+* Mon Sep 09 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.2-3
+- Added BR ffmpeg-libs
+
 * Tue Aug 27 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.2-2
 - Reduced BRs a lot (removed support for various stuff)
 - Make smbclient realized

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.1.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -69,6 +69,9 @@ install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.con
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %changelog
+* Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.1.2-4
+- Rebuilt
+
 * Mon Sep 09 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.2-3
 - Added BR ffmpeg-libs
 

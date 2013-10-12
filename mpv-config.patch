@@ -15,7 +15,7 @@ index 96c7afa..d9d1aea 100644
  
  # Specify default video driver (see -vo help for a list).
  #vo=vdpau
-+vo=xv
++#vo=xv
  
  # Start in fullscreen mode by default.
  #fs=yes

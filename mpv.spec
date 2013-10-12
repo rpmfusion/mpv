@@ -1,10 +1,11 @@
 Name:           mpv
-Version:        0.1.2
+Version:        0.1.7
 Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
 Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz
+Source1:        %{name}.desktop
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -12,6 +13,7 @@ Patch0:         %{name}-config.patch
 BuildRequires:  aalib-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bzip2-devel
+BuildRequires:  desktop-file-utils
 BuildRequires:  ffmpeg-devel
 BuildRequires:  ffmpeg-libs
 BuildRequires:  libass-devel
@@ -60,15 +62,29 @@ make install DESTDIR=%{buildroot}
 
 # Default config files
 install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+desktop-file-install %{SOURCE1}
 
 %files
 %doc AUTHORS LICENSE README.md Copyright
 %{_bindir}/%{name}
+%{_datadir}/applications/%{name}.desktop
 %{_mandir}/man1/%{name}.*
 %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %changelog
+* Sat Oct 12 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.7-3
+- Add desktop file
+
+* Sat Oct 12 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.7-2
+- Do not use xv as default vo
+
+* Sat Oct 12 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.7-1
+- New upstream release
+
+* Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.1.2-4
+- Rebuilt
+
 * Mon Sep 09 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.2-3
 - Added BR ffmpeg-libs
 

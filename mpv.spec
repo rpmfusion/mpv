@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.1.7
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -73,6 +73,9 @@ desktop-file-install %{SOURCE1}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %changelog
+* Sat Oct 12 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.7-4
+- Fixing cvs errors
+
 * Sat Oct 12 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.7-3
 - Add desktop file
 

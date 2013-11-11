@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.2.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -28,6 +28,8 @@ BuildRequires:  libXv-devel
 BuildRequires:  lirc-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
+
+Requires:       hicolor-icon-theme
 
 %description
 Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety
@@ -62,17 +64,45 @@ make install DESTDIR=%{buildroot}
 
 # Default config files
 install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+install -Dpm 644 etc/input.conf %{buildroot}%{_sysconfdir}/%{name}/input.conf
+
 desktop-file-install %{SOURCE1}
 
+for RES in 16 32 64; do
+  install -Dpm 644 etc/mpv-icon-8bit-${RES}x${RES}.png %{buildroot}%{_datadir}/icons/hicolor/${RES}x${RES}/apps/%{name}.png
+done
+
+%post
+update-desktop-database &>/dev/null || :
+touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+
+%postun
+update-desktop-database &> /dev/null || :
+if [ $1 -eq 0 ] ; then
+  touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+  gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
+  glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
+fi
+
+%posttrans
+gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
+glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
+
 %files
-%doc AUTHORS LICENSE README.md Copyright
+%doc LICENSE README.md Copyright
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
+%{_datadir}/icons/hicolor/*/apps/%{name}.*
 %{_mandir}/man1/%{name}.*
 %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Mon Nov 11 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.3-4
+- There's no longer AUTHORS file in %%doc
+- Install icons
+
 * Mon Nov 11 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.3-3
 - Rebased config patch
 

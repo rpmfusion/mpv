@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.2.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -73,6 +73,9 @@ desktop-file-install %{SOURCE1}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 
 %changelog
+* Mon Nov 11 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.3-3
+- Rebased config patch
+
 * Mon Nov 11 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.3-2
 - Proper sources for all branches
 

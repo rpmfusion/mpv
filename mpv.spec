@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.2.4
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -25,6 +25,7 @@ BuildRequires:  libbluray-devel
 BuildRequires:  libdvdnav-devel
 BuildRequires:  libquvi-devel
 BuildRequires:  libsmbclient-devel
+BuildRequires:  libva-devel
 BuildRequires:  libvdpau-devel
 BuildRequires:  lirc-devel
 BuildRequires:  lua-devel
@@ -101,6 +102,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Sun Dec 15 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-4
+- Added libva (#3065)
+
 * Sun Dec 15 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-3
 - Added lua and libquvi (#3025)
 

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.2.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -16,16 +16,18 @@ BuildRequires:  bzip2-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  ffmpeg-devel
 BuildRequires:  ffmpeg-libs
+BuildRequires:  libGL-devel
+BuildRequires:  libXScrnSaver-devel
+BuildRequires:  libXinerama-devel
+BuildRequires:  libXv-devel
 BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libdvdnav-devel
-BuildRequires:  libGL-devel
+BuildRequires:  libquvi-devel
 BuildRequires:  libsmbclient-devel
 BuildRequires:  libvdpau-devel
-BuildRequires:  libXinerama-devel
-BuildRequires:  libXScrnSaver-devel
-BuildRequires:  libXv-devel
 BuildRequires:  lirc-devel
+BuildRequires:  lua-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
 
@@ -99,6 +101,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Sun Dec 15 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-3
+- Added lua and libquvi (#3025)
+
 * Sun Dec 15 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-2
 - Rebuilt for mistakes
 

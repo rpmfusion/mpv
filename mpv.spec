@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.2.3
-Release:        4%{?dist}
+Version:        0.2.4
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv3+
 URL:            http://%{name}.io/
@@ -99,6 +99,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Sun Dec 15 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-1
+- New version 0.2.4
+
 * Mon Nov 11 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.3-4
 - There's no longer AUTHORS file in %%doc
 - Install icons

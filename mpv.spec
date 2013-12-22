@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.2.4
-Release:        6%{?dist}
+Release:        8%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -9,6 +9,9 @@ Source1:        %{name}.desktop
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
+
+# https://github.com/mpv-player/mpv/pull/422
+Patch1:         %{name}-format-security.patch
 
 BuildRequires:  aalib-devel
 BuildRequires:  alsa-lib-devel
@@ -23,14 +26,20 @@ BuildRequires:  libXv-devel
 BuildRequires:  libass-devel
 BuildRequires:  libbluray-devel
 BuildRequires:  libdvdnav-devel
+BuildRequires:  libguess-devel
 BuildRequires:  libquvi-devel
 BuildRequires:  libsmbclient-devel
 BuildRequires:  libva-devel
 BuildRequires:  libvdpau-devel
+BuildRequires:  libwayland-client-devel
+BuildRequires:  libwayland-cursor-devel
+BuildRequires:  libwayland-server-devel
+BuildRequires:  libxkbcommon-devel
 BuildRequires:  lirc-devel
 BuildRequires:  lua-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
+BuildRequires:  wayland-devel
 
 Requires:       hicolor-icon-theme
 
@@ -44,6 +53,7 @@ output methods are supported.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 ./configure \
@@ -102,6 +112,12 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Sun Dec 22 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-8
+- Added patch for https://fedoraproject.org/wiki/Changes/FormatSecurity
+
+* Sun Dec 22 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-7
+- Support wayland
+
 * Sun Dec 22 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-6
 - Rebuilt
 

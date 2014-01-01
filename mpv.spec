@@ -1,11 +1,10 @@
 Name:           mpv
 Version:        0.3.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
 Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz
-Source1:        %{name}.desktop
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -79,11 +78,12 @@ waf --destdir=%{buildroot} install %{?_smp_mflags}
 install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dpm 644 etc/input.conf %{buildroot}%{_sysconfdir}/%{name}/input.conf
 
-desktop-file-install %{SOURCE1}
+desktop-file-install etc/mpv.desktop
 
 for RES in 16 32 64; do
   install -Dpm 644 etc/mpv-icon-8bit-${RES}x${RES}.png %{buildroot}%{_datadir}/icons/hicolor/${RES}x${RES}/apps/%{name}.png
 done
+
 
 %post
 update-desktop-database &>/dev/null || :
@@ -113,6 +113,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Wed Jan 01 2014 Miro Hrončok <mhroncok@redhat.com> - 0.3.0-2
+- Use upstream .desktop file
+
 * Wed Jan 01 2014 Miro Hrončok <mhroncok@redhat.com> - 0.3.0-1
 - New version 0.3.0
 - Switch to waf

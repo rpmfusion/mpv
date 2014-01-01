@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.2.4
-Release:        8%{?dist}
+Version:        0.3.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -10,15 +10,14 @@ Source1:        %{name}.desktop
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
 
-# https://github.com/mpv-player/mpv/pull/422
-Patch1:         %{name}-format-security.patch
-
 BuildRequires:  aalib-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  ffmpeg-devel
 BuildRequires:  ffmpeg-libs
+BuildRequires:  libcdio-devel
+BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libGL-devel
 BuildRequires:  libXScrnSaver-devel
 BuildRequires:  libXinerama-devel
@@ -39,6 +38,7 @@ BuildRequires:  lirc-devel
 BuildRequires:  lua-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
+BuildRequires:  waf
 BuildRequires:  wayland-devel
 
 Requires:       hicolor-icon-theme
@@ -53,27 +53,27 @@ output methods are supported.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
-./configure \
-    --prefix=%{_prefix} \
-    --bindir=%{_bindir} \
-    --mandir=%{_mandir} \
-    --confdir=%{_sysconfdir}/%{name} \
-    --extra-cflags="$RPM_OPT_FLAGS" \
+CCFLAGS="%{optflags}" \
+waf configure \
+    --prefix="%{_prefix}" \
+    --bindir="%{_bindir}" \
+    --mandir="%{_mandir}" \
+    --docdir="%{_docdir}/%{name}" \
+    --confdir="%{_sysconfdir}/%{name}" \
     --enable-joystick \
     --enable-lirc \
     --enable-radio \
     --enable-radio-capture \
-    --enable-smb \
-    --disable-termcap \
-    --extra-cflags='-I/usr/include/samba-4.0/'
+    --disable-sdl --disable-sdl2 \
+    --disable-build-date \
+    --disable-debug
 
-make %{?_smp_mflags}
+waf build --verbose %{?_smp_mflags}
 
 %install
-make install DESTDIR=%{buildroot}
+waf --destdir=%{buildroot} install %{?_smp_mflags}
 
 # Default config files
 install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
@@ -107,11 +107,18 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
 %{_mandir}/man1/%{name}.*
-%{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Wed Jan 01 2014 Miro Hrončok <mhroncok@redhat.com> - 0.3.0-1
+- New version 0.3.0
+- Switch to waf
+- Add some tricks from openSUSE
+- Removed already included patch
+
 * Sun Dec 22 2013 Miro Hrončok <mhroncok@redhat.com> - 0.2.4-8
 - Added patch for https://fedoraproject.org/wiki/Changes/FormatSecurity
 

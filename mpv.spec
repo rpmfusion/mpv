@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.3.3
+Version:        0.3.5
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -113,6 +113,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Fri Feb 28 2014 Miro Hrončok <mhroncok@redhat.com> - 0.3.5-1
+- New version 0.3.5
+
 * Sat Jan 25 2014 Miro Hrončok <mhroncok@redhat.com> - 0.3.3-1
 - New version 0.3.3
 

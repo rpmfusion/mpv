@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.3.11
+Version:        0.4.0
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -63,9 +63,7 @@ waf configure \
     --confdir="%{_sysconfdir}/%{name}" \
     --enable-joystick \
     --enable-lirc \
-    --enable-radio \
-    --enable-radio-capture \
-    --disable-sdl --disable-sdl2 \
+    --disable-sdl1 --disable-sdl2 \
     --disable-build-date \
     --disable-debug
 
@@ -113,6 +111,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Tue Jul 08 2014 Miro Hrončok <mhroncok@redhat.com> - 0.4.0-1
+- New version 0.4.0
+
 * Tue Jun 24 2014 Miro Hrončok <mhroncok@redhat.com> - 0.3.11-1
 - New version 0.3.11
 

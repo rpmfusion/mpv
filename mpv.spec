@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.4.0
-Release:        2%{?dist}
+Version:        0.5.1
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -35,6 +35,7 @@ BuildRequires:  libwayland-server-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  lirc-devel
 BuildRequires:  lua-devel
+BuildRequires:  ncurses-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
 BuildRequires:  waf
@@ -111,6 +112,10 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Wed Sep 03 2014 Miro Hrončok <mhroncok@redhat.com> - 0.5.1-1
+- New version 0.5.1
+- Add BR ncurses-devel (#3233)
+
 * Thu Aug 07 2014 Sérgio Basto <sergio@serjux.com> - 0.4.0-2
 - Rebuilt for ffmpeg-2.3
 

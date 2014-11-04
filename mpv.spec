@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.6.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -112,6 +112,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Tue Nov 04 2014 Nicolas Chauvet <kwizart@gmail.com> - 0.6.0-3
+- Rebuilt for vaapi 0.36
+
 * Mon Oct 20 2014 Sérgio Basto <sergio@serjux.com> - 0.6.0-2
 - Rebuilt for FFmpeg 2.4.3
 

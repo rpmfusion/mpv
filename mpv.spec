@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.7.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -8,6 +8,10 @@ Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.ta
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
+
+# Upstream commit to use waf >= 1.8 (reverted, rebased)
+# See https://github.com/mpv-player/mpv/issues/1363
+Patch1:         %{name}-old-waf.patch
 
 BuildRequires:  aalib-devel
 BuildRequires:  alsa-lib-devel
@@ -53,6 +57,7 @@ output methods are supported.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 CCFLAGS="%{optflags}" \
@@ -112,6 +117,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Mon Dec 22 2014 Miro Hrončok <mhroncok@redhat.com> - 0.7.1-2
+- Add patch to allow waf 1.7
+
 * Sat Dec 13 2014 Miro Hrončok <mhroncok@redhat.com> - 0.7.1-1
 - New version 0.7.1
 - Rebuilt new lirc (#3450)

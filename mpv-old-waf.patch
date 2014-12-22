@@ -1,0 +1,75 @@
+diff --git a/bootstrap.py b/bootstrap.py
+index f354d5f..ce388ff 100755
+--- a/bootstrap.py
++++ b/bootstrap.py
+@@ -5,9 +5,9 @@
+ from __future__ import print_function
+ import os, sys, stat, hashlib, subprocess
+ 
+-WAFRELEASE = "waf-1.8.1"
++WAFRELEASE = "waf-1.7.16"
+ WAFURL     = "http://ftp.waf.io/pub/release/" + WAFRELEASE
+-SHA256HASH = "ec658116ba0b96629d91fde0b32321849e866e0819f1e835c4c2c7f7ffe1a21d"
++SHA256HASH = "b64dc26c882572415fd450b745006107965f3fe17b357e3eb43d6676c9635a61"
+ 
+ if os.path.exists("waf"):
+     wafver = subprocess.check_output(['./waf', '--version']).decode()
+@@ -31,8 +31,6 @@ if SHA256HASH == hashlib.sha256(waf).hexdigest():
+     print("Checksum verified.")
+ else:
+     print("The checksum of the downloaded file does not match!")
+-    print(" - got:      {}".format(hashlib.sha256(waf).hexdigest()))
+-    print(" - expected: {}".format(SHA256HASH))
+     print("Please download and verify the file manually.")
+ 
+     sys.exit(1)
+diff --git a/waftools/generators/headers.py b/waftools/generators/headers.py
+index 79bd71d..bd28bef 100644
+--- a/waftools/generators/headers.py
++++ b/waftools/generators/headers.py
+@@ -1,5 +1,5 @@
+ def __cp_to_variant__(ctx, variant, basename):
+-    src = ctx.bldnode.search_node(basename).read()
++    src = ctx.bldnode.search(basename).read()
+     node = ctx.bldnode.make_node("{0}/{1}".format(variant, basename))
+     node.parent.mkdir()
+     node.write(src)
+diff --git a/waftools/waf_customizations.py b/waftools/waf_customizations.py
+index 8163c9f..a02bc95 100644
+--- a/waftools/waf_customizations.py
++++ b/waftools/waf_customizations.py
+@@ -34,6 +34,21 @@ def build(ctx):
+     cls = Task.classes['cprogram']
+     class cprogram(cls):
+         run_str = cls.hcode + '${LAST_LINKFLAGS}'
++        def __str__(self):
++            tgt_str = ' '.join([a.nice_path() for a in self.outputs])
++            return 'linking -> {0}\n'.format(tgt_str)
++
++    cls = Task.classes['cshlib']
++    class cshlib(cls):
++        def __str__(self):
++            tgt_str = ' '.join([a.nice_path() for a in self.outputs])
++            return 'linking -> {0}\n'.format(tgt_str)
++
++    cls = Task.classes['compile_sym']
++    class compile_sym(cls):
++        def __str__(self):
++            tgt_str = ' '.join([a.nice_path() for a in self.outputs])
++            return 'compile_sym -> {0}\n'.format(tgt_str)
+ 
+     cls = Task.classes['macplist']
+     class macplist(cls):
+diff --git a/wscript b/wscript
+index 7e82038..aa041c4 100644
+--- a/wscript
++++ b/wscript
+@@ -848,7 +848,7 @@ def is_debug_build(ctx):
+ 
+ def configure(ctx):
+     ctx.resetenv(ctx.options.variant)
+-    ctx.check_waf_version(mini='1.8.1')
++    ctx.check_waf_version(mini='1.7.15')
+     target = os.environ.get('TARGET')
+     (cc, pkg_config, ar, windres) = ('cc', 'pkg-config', 'ar', 'windres')
+ 

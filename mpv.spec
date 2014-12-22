@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.7.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -117,6 +117,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Mon Dec 22 2014 Miro Hrončok <mhroncok@redhat.com> - 0.7.1-3
+- Slightly change the waf patch
+
 * Mon Dec 22 2014 Miro Hrončok <mhroncok@redhat.com> - 0.7.1-2
 - Add patch to allow waf 1.7
 

@@ -35,10 +35,10 @@ index 79bd71d..bd28bef 100644
      node.parent.mkdir()
      node.write(src)
 diff --git a/waftools/waf_customizations.py b/waftools/waf_customizations.py
-index 8163c9f..a02bc95 100644
+index 8163c9f..029ad8d 100644
 --- a/waftools/waf_customizations.py
 +++ b/waftools/waf_customizations.py
-@@ -34,6 +34,21 @@ def build(ctx):
+@@ -34,6 +34,15 @@ def build(ctx):
      cls = Task.classes['cprogram']
      class cprogram(cls):
          run_str = cls.hcode + '${LAST_LINKFLAGS}'
@@ -51,12 +51,6 @@ index 8163c9f..a02bc95 100644
 +        def __str__(self):
 +            tgt_str = ' '.join([a.nice_path() for a in self.outputs])
 +            return 'linking -> {0}\n'.format(tgt_str)
-+
-+    cls = Task.classes['compile_sym']
-+    class compile_sym(cls):
-+        def __str__(self):
-+            tgt_str = ' '.join([a.nice_path() for a in self.outputs])
-+            return 'compile_sym -> {0}\n'.format(tgt_str)
  
      cls = Task.classes['macplist']
      class macplist(cls):

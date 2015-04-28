@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.8.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -57,7 +57,11 @@ output methods are supported.
 %prep
 %setup -q
 %patch0 -p1
+
+%if 0%{?fedora} < 22
 %patch1 -p1
+%endif
+
 
 %build
 CCFLAGS="%{optflags}" \
@@ -117,6 +121,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Tue Apr 28 2015 Miro Hrončok <mhroncok@redhat.com> - 0.8.3-3
+- Conditionalize old waf patch
+
 * Tue Apr 28 2015 Miro Hrončok <mhroncok@redhat.com> - 0.8.3-2
 - Rebuilt
 

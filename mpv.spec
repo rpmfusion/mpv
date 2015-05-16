@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.8.3
-Release:        3%{?dist}
+Version:        0.9.1
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -16,9 +16,11 @@ Patch1:         %{name}-old-waf.patch
 BuildRequires:  aalib-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bzip2-devel
+BuildRequires:  compat-lua-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  ffmpeg-devel
 BuildRequires:  ffmpeg-libs
+BuildRequires:  lcms2-devel
 BuildRequires:  libcdio-devel
 BuildRequires:  libcdio-paranoia-devel
 BuildRequires:  libGL-devel
@@ -38,7 +40,6 @@ BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libwayland-server-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  lirc-devel
-BuildRequires:  lua-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
@@ -71,8 +72,6 @@ waf configure \
     --mandir="%{_mandir}" \
     --docdir="%{_docdir}/%{name}" \
     --confdir="%{_sysconfdir}/%{name}" \
-    --enable-joystick \
-    --enable-lirc \
     --disable-sdl1 --disable-sdl2 \
     --disable-build-date \
     --disable-debug
@@ -121,6 +120,12 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %changelog
+* Sat May 16 2015 Miro Hrončok <mhroncok@redhat.com> - 0.9.1-1
+- Update to 0.9.1
+- BR compat-lua-devel because mpv does not work with lua 5.3
+- Add BR lcms2-devel (#3643)
+- Removed --enable-joystick and --enable-lirc (no longer used)
+
 * Tue Apr 28 2015 Miro Hrončok <mhroncok@redhat.com> - 0.8.3-3
 - Conditionalize old waf patch
 

@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.9.1
+Version:        0.9.2
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -55,6 +55,20 @@ input URL types are available to read input from a variety of sources other
 than disk files. Depending on platform, a variety of different video and audio
 output methods are supported.
 
+%package -n libmpv
+Summary: Dynamic library for Mpv frontends 
+
+%description -n libmpv
+This package contains the dynamic library libmpv, which provides access to Mpv.
+
+%package -n libmpv-devel
+Summary: Development package for libmpv
+Requires: libmpv%{_isa} = %{version}-%{release}
+Requires: pkgconfig
+
+%description -n libmpv-devel
+Libmpv development header files and libraries.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -69,12 +83,14 @@ CCFLAGS="%{optflags}" \
 waf configure \
     --prefix="%{_prefix}" \
     --bindir="%{_bindir}" \
+    --libdir="%{_libdir}" \
     --mandir="%{_mandir}" \
     --docdir="%{_docdir}/%{name}" \
     --confdir="%{_sysconfdir}/%{name}" \
     --disable-sdl1 --disable-sdl2 \
     --disable-build-date \
-    --disable-debug
+    --disable-debug \
+    --enable-libmpv-shared
 
 waf build --verbose %{?_smp_mflags}
 
@@ -108,6 +124,10 @@ fi
 gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
+%post -n libmpv -p /sbin/ldconfig
+
+%postun -n libmpv -p /sbin/ldconfig
+
 %files
 %doc LICENSE README.md Copyright
 %{_bindir}/%{name}
@@ -119,7 +139,20 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 %config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
+%files -n libmpv
+%doc LICENSE README.md Copyright
+%{_libdir}/libmpv.so.*
+
+%files -n libmpv-devel
+%{_includedir}/%{name}
+%{_libdir}/libmpv.so
+%{_libdir}/pkgconfig/mpv.pc
+
 %changelog
+* Wed Jun 10 2015 Miro Hrončok <mhroncok@redhat.com> - 0.9.2-1
+- Updated to 0.9.2
+- Also build the library
+
 * Sat May 16 2015 Miro Hrončok <mhroncok@redhat.com> - 0.9.1-1
 - Update to 0.9.1
 - BR compat-lua-devel because mpv does not work with lua 5.3

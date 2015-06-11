@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.9.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -89,7 +89,6 @@ waf configure \
     --confdir="%{_sysconfdir}/%{name}" \
     --disable-sdl1 --disable-sdl2 \
     --disable-build-date \
-    --disable-debug \
     --enable-libmpv-shared
 
 waf build --verbose %{?_smp_mflags}
@@ -149,6 +148,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Jun 11 2015 Miro Hrončok <mhroncok@redhat.com> - 0.9.2-2
+- Removed --disable-debug flag
+
 * Wed Jun 10 2015 Miro Hrončok <mhroncok@redhat.com> - 0.9.2-1
 - Updated to 0.9.2
 - Also build the library

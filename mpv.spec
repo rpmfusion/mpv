@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.13.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -40,11 +40,18 @@ BuildRequires:  libwayland-cursor-devel
 BuildRequires:  libwayland-server-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  lirc-devel
+BuildRequires:  mesa-libEGL-devel
 BuildRequires:  ncurses-devel
+BuildRequires:  perl-Encode
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  python-docutils
 BuildRequires:  waf
 BuildRequires:  wayland-devel
+
+%if 0%{?fedora} >= 23
+BuildRequires:  perl-Math-BigInt
+BuildRequires:  perl-bignum
+%endif
 
 Requires:       hicolor-icon-theme
 
@@ -129,6 +136,7 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
 %files
 %doc LICENSE README.md Copyright
+%doc %{_docdir}/%{name}/*
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
@@ -148,6 +156,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Nov 26 2015 Miro Hrončok <mhroncok@redhat.com> - 0.13.0-2
+- Add mesa-libEGL-devel to BRs
+
 * Thu Nov 26 2015 Miro Hrončok <mhroncok@redhat.com> - 0.13.0-1
 - Updated to 0.13.0
 

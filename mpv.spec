@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.14.0
+Version:        0.15.0
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -13,40 +13,39 @@ Patch0:         %{name}-config.patch
 # See https://github.com/mpv-player/mpv/issues/1363
 Patch1:         %{name}-old-waf.patch
 
-BuildRequires:  aalib-devel
-BuildRequires:  alsa-lib-devel
-BuildRequires:  bzip2-devel
-BuildRequires:  compat-lua-devel
+BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(zlib)
+BuildRequires:  pkgconfig(gbm)
+BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  desktop-file-utils
 BuildRequires:  ffmpeg-devel
-BuildRequires:  ffmpeg-libs
-BuildRequires:  lcms2-devel
-BuildRequires:  libcdio-devel
-BuildRequires:  libcdio-paranoia-devel
-BuildRequires:  libGL-devel
-BuildRequires:  libXScrnSaver-devel
-BuildRequires:  libXinerama-devel
-BuildRequires:  libXv-devel
-BuildRequires:  libass-devel
-BuildRequires:  libbluray-devel
-BuildRequires:  libdvdnav-devel
-BuildRequires:  libguess-devel
-BuildRequires:  libquvi-devel
-BuildRequires:  libsmbclient-devel
-BuildRequires:  libva-devel
-BuildRequires:  libvdpau-devel
-BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-cursor-devel
-BuildRequires:  libwayland-server-devel
-BuildRequires:  libxkbcommon-devel
-BuildRequires:  lirc-devel
-BuildRequires:  mesa-libEGL-devel
-BuildRequires:  ncurses-devel
-BuildRequires:  perl-Encode
-BuildRequires:  pulseaudio-libs-devel
+BuildRequires:  pkgconfig(lcms2)
+BuildRequires:  pkgconfig(libcdio)
+BuildRequires:  pkgconfig(libcdio_paranoia)
+BuildRequires:  pkgconfig(gl)
+BuildRequires:  pkgconfig(xscrnsaver)
+BuildRequires:  pkgconfig(xinerama)
+BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(libass)
+BuildRequires:  pkgconfig(libbluray)
+BuildRequires:  pkgconfig(dvdnav)
+BuildRequires:  pkgconfig(libguess)
+BuildRequires:  pkgconfig(libquvi-0.9)
+BuildRequires:  pkgconfig(smbclient)
+BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(vdpau)
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(wayland-cursor)
+BuildRequires:  pkgconfig(wayland-egl)
+BuildRequires:  pkgconfig(xkbcommon)
+BuildRequires:  pkgconfig(lirc)
+BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  python-docutils
 BuildRequires:  waf
 BuildRequires:  wayland-devel
+BuildRequires:  mesa-libEGL-devel
 
 %if 0%{?fedora} >= 23
 BuildRequires:  perl-Math-BigInt
@@ -94,27 +93,18 @@ waf configure \
     --mandir="%{_mandir}" \
     --docdir="%{_docdir}/%{name}" \
     --confdir="%{_sysconfdir}/%{name}" \
-    --disable-sdl1 --disable-sdl2 \
     --disable-build-date \
-    --enable-libmpv-shared
+    --enable-libmpv-shared \
+    --enable-gpl3 \
+    --enable-sdl2
 
 waf build --verbose %{?_smp_mflags}
 
 %install
 waf --destdir=%{buildroot} install %{?_smp_mflags}
 
-# Default config files
-install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
-install -Dpm 644 etc/input.conf %{buildroot}%{_sysconfdir}/%{name}/input.conf
-
 desktop-file-install etc/mpv.desktop
-
-for RES in 16 32 64; do
-  install -Dpm 644 etc/mpv-icon-8bit-${RES}x${RES}.png %{buildroot}%{_datadir}/icons/hicolor/${RES}x${RES}/apps/%{name}.png
-done
-install -Dpm 644 etc/%{name}-gradient.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}-gradient.svg
 install -Dpm 644 etc/%{name}-symbolic.svg %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps/%{name}-symbolic.svg
-install -Dpm 644 etc/%{name}.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 %post
 update-desktop-database &>/dev/null || :
@@ -125,12 +115,10 @@ update-desktop-database &> /dev/null || :
 if [ $1 -eq 0 ] ; then
   touch --no-create %{_datadir}/icons/hicolor &>/dev/null
   gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
-  glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 fi
 
 %posttrans
 gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
-glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
 %post -n libmpv -p /sbin/ldconfig
 
@@ -138,15 +126,12 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
 %files
 %doc LICENSE README.md Copyright
-%doc %{_docdir}/%{name}/*
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
 %{_mandir}/man1/%{name}.*
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/%{name}.conf
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
-%config(noreplace) %{_sysconfdir}/%{name}/input.conf
 
 %files -n libmpv
 %doc LICENSE README.md Copyright
@@ -158,6 +143,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Jan 21 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.15.0-1
+- update to 0.15.0
+
 * Sat Dec 12 2015 Evgeny Lensky <surfernsk@gmail.com> - 0.14.0-1
 - update to 0.14.0
 
@@ -314,4 +302,3 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 * Mon Aug 19 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.2-1
 - Initial spec
 - Inspired a lot in mplayer.spec
-

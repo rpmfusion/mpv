@@ -1,7 +1,5 @@
-diff --git a/etc/example.conf b/etc/example.conf
-index cf9089f..8bb9b7b 100644
---- a/etc/example.conf
-+++ b/etc/example.conf
+--- a/etc/mpv.conf
++++ b/etc/mpv.conf
 @@ -1,7 +1,7 @@
  #
  # mpv configuration file
@@ -11,19 +9,30 @@ index cf9089f..8bb9b7b 100644
  # and per-user from ~/.config/mpv/mpv.conf, where per-user settings override
  # system-wide settings, all of which are overridden by the command line.
  #
-@@ -28,6 +28,7 @@
+@@ -27,7 +27,7 @@
+ ##################
  
  # Specify default video driver (see --vo=help for a list).
- #vo=vdpau
-+vo=opengl
+-#vo=opengl-hq
++vo=opengl-hq
  
  # Start in fullscreen mode by default.
  #fs=yes
-@@ -50,6 +51,7 @@
+@@ -49,7 +49,7 @@
+ ##################
  
  # Specify default audio driver (see --ao=help for a list).
- #ao=alsa
-+ao=pulse,alsa,
+-#ao=alsa
++ao=pulse,alsa
  
  # Disable softvol usage, and always use the system mixer if available.
  #softvol=no
+@@ -102,7 +102,7 @@
+ 
+ # Enable hardware decoding if available. Often, this requires using an certain
+ # video output, otherwise no hardware decoding will be used.
+-#hwdec=auto
++hwdec=auto
+ 
+ ############
+ # Profiles #

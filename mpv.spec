@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.14.0
+Version:        0.15.0
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -14,8 +14,12 @@ Patch0:         %{name}-config.patch
 Patch1:         %{name}-old-waf.patch
 
 BuildRequires:  aalib-devel
-BuildRequires:  alsa-lib-devel
+BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  bzip2-devel
+BuildRequires:  pkgconfig(gl)
+BuildRequires:  pkgconfig(gbm)
+BuildRequires:  pkgconfig(jack)
 BuildRequires:  compat-lua-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  ffmpeg-devel
@@ -23,30 +27,29 @@ BuildRequires:  ffmpeg-libs
 BuildRequires:  lcms2-devel
 BuildRequires:  libcdio-devel
 BuildRequires:  libcdio-paranoia-devel
-BuildRequires:  libGL-devel
-BuildRequires:  libXScrnSaver-devel
-BuildRequires:  libXinerama-devel
-BuildRequires:  libXv-devel
-BuildRequires:  libass-devel
+BuildRequires:  pkgconfig(gl)
+BuildRequires:  pkgconfig(xscrnsaver)
+BuildRequires:  pkgconfig(xinerama)
+BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(libass)
 BuildRequires:  libbluray-devel
-BuildRequires:  libdvdnav-devel
+BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  libguess-devel
 BuildRequires:  libquvi-devel
-BuildRequires:  libsmbclient-devel
-BuildRequires:  libva-devel
-BuildRequires:  libvdpau-devel
-BuildRequires:  libwayland-client-devel
-BuildRequires:  libwayland-cursor-devel
-BuildRequires:  libwayland-server-devel
-BuildRequires:  libxkbcommon-devel
+BuildRequires:  pkgconfig(smbclient)
+BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(vdpau)
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(wayland-cursor)
+BuildRequires:  pkgconfig(wayland-egl)
+BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  lirc-devel
-BuildRequires:  mesa-libEGL-devel
 BuildRequires:  ncurses-devel
-BuildRequires:  perl-Encode
-BuildRequires:  pulseaudio-libs-devel
+BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  python-docutils
 BuildRequires:  waf
 BuildRequires:  wayland-devel
+BuildRequires:  mesa-libEGL-devel
 
 %if 0%{?fedora} >= 23
 BuildRequires:  perl-Math-BigInt
@@ -94,9 +97,10 @@ waf configure \
     --mandir="%{_mandir}" \
     --docdir="%{_docdir}/%{name}" \
     --confdir="%{_sysconfdir}/%{name}" \
-    --disable-sdl1 --disable-sdl2 \
     --disable-build-date \
-    --enable-libmpv-shared
+    --enable-libmpv-shared \
+    --enable-gpl3 \
+    --enable-sdl2
 
 waf build --verbose %{?_smp_mflags}
 
@@ -104,7 +108,7 @@ waf build --verbose %{?_smp_mflags}
 waf --destdir=%{buildroot} install %{?_smp_mflags}
 
 # Default config files
-install -Dpm 644 etc/example.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+install -Dpm 644 etc/mpv.conf %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 install -Dpm 644 etc/input.conf %{buildroot}%{_sysconfdir}/%{name}/input.conf
 
 desktop-file-install etc/mpv.desktop
@@ -158,6 +162,9 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Jan 21 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.15.0-1
+- update to 0.15.0
+
 * Sat Dec 12 2015 Evgeny Lensky <surfernsk@gmail.com> - 0.14.0-1
 - update to 0.14.0
 
@@ -314,4 +321,3 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 * Mon Aug 19 2013 Miro Hrončok <mhroncok@redhat.com> - 0.1.2-1
 - Initial spec
 - Inspired a lot in mplayer.spec
-

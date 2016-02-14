@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.15.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -40,7 +40,6 @@ BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
 BuildRequires:  pkgconfig(xkbcommon)
-BuildRequires:  pkgconfig(lirc)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  python-docutils
 BuildRequires:  waf
@@ -125,8 +124,12 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %postun -n libmpv -p /sbin/ldconfig
 
 %files
-%doc LICENSE README.md Copyright
-%doc %{_docdir}/%{name}/*
+%doc README.md
+%license LICENSE Copyright
+%if 0%{?fedora} >= 23
+%{_docdir}/%{name}
+%endif
+
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
@@ -135,7 +138,6 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
 %files -n libmpv
-%doc LICENSE README.md Copyright
 %{_libdir}/libmpv.so.*
 
 %files -n libmpv-devel
@@ -144,6 +146,11 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Feb 14 2016 Sérgio Basto <sergio@serjux.com> - 0.15.0-2
+- Drop BR lirc, because support for LIRC has been removed in mpv 0.9.0.
+- Add license tag.
+- libmpv-devel does not need have same doc and license files.
+
 * Thu Jan 21 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.15.0-1
 - update to 0.15.0
 

@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.15.0
-Release:        2%{?dist}
+Version:        0.16.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -104,6 +104,7 @@ waf --destdir=%{buildroot} install %{?_smp_mflags}
 
 desktop-file-install etc/mpv.desktop
 install -Dpm 644 etc/%{name}-symbolic.svg %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps/%{name}-symbolic.svg
+install -Dpm 644 README.md %{buildroot}%{_docdir}/%{name}/README.md
 
 %post
 update-desktop-database &>/dev/null || :
@@ -124,12 +125,9 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %postun -n libmpv -p /sbin/ldconfig
 
 %files
-%doc README.md
-%license LICENSE Copyright
-%if 0%{?fedora} >= 23
+%docdir %{_docdir}/%{name}
 %{_docdir}/%{name}
-%endif
-
+%license LICENSE Copyright
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
@@ -146,6 +144,10 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Feb 29 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.16.0-1
+- update to 0.16.0
+- edit mpv-config.patch
+
 * Sun Feb 14 2016 Sérgio Basto <sergio@serjux.com> - 0.15.0-2
 - Drop BR lirc, because support for LIRC has been removed in mpv 0.9.0.
 - Add license tag.

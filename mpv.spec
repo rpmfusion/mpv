@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.16.0
+Version:        0.17.0
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -47,8 +47,8 @@ BuildRequires:  wayland-devel
 BuildRequires:  mesa-libEGL-devel
 
 %if 0%{?fedora} >= 23
-BuildRequires:  perl-Math-BigInt
-BuildRequires:  perl-bignum
+BuildRequires:  perl(Math::BigInt)
+BuildRequires:  perl(Math::BigRat)
 %endif
 
 Requires:       hicolor-icon-theme
@@ -95,15 +95,15 @@ waf configure \
     --disable-build-date \
     --enable-libmpv-shared \
     --enable-gpl3 \
-    --enable-sdl2
+    --enable-sdl2 \
+    --enable-encoding
 
-waf build --verbose %{?_smp_mflags}
+waf build %{?_smp_mflags}
 
 %install
-waf --destdir=%{buildroot} install %{?_smp_mflags}
+waf install --destdir=%{buildroot}
 
 desktop-file-install etc/mpv.desktop
-install -Dpm 644 etc/%{name}-symbolic.svg %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps/%{name}-symbolic.svg
 install -Dpm 644 README.md %{buildroot}%{_docdir}/%{name}/README.md
 
 %post
@@ -144,6 +144,9 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Apr 11 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.17.0-1
+- update to 0.17.0
+
 * Mon Feb 29 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.16.0-1
 - update to 0.16.0
 - edit mpv-config.patch

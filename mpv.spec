@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.17.0
+Version:        0.18.0
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -86,15 +86,14 @@ Libmpv development header files and libraries.
 %build
 CCFLAGS="%{optflags}" \
 waf configure \
-    --prefix="%{_prefix}" \
-    --bindir="%{_bindir}" \
-    --libdir="%{_libdir}" \
-    --mandir="%{_mandir}" \
-    --docdir="%{_docdir}/%{name}" \
-    --confdir="%{_sysconfdir}/%{name}" \
+    --prefix=%{_prefix} \
+    --bindir=%{_bindir} \
+    --libdir=%{_libdir} \
+    --mandir=%{_mandir} \
+    --docdir=%{_docdir}/%{name} \
+    --confdir=%{_sysconfdir}/%{name} \
     --disable-build-date \
     --enable-libmpv-shared \
-    --enable-gpl3 \
     --enable-sdl2 \
     --enable-encoding
 
@@ -104,21 +103,21 @@ waf build %{?_smp_mflags}
 waf install --destdir=%{buildroot}
 
 desktop-file-install etc/mpv.desktop
-install -Dpm 644 README.md %{buildroot}%{_docdir}/%{name}/README.md
+install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
 
 %post
-update-desktop-database &>/dev/null || :
-touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+/usr/bin/update-desktop-database &>/dev/null || :
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 
 %postun
-update-desktop-database &> /dev/null || :
+/usr/bin/update-desktop-database &> /dev/null || :
 if [ $1 -eq 0 ] ; then
-  touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-  gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
+    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 fi
 
 %posttrans
-gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %post -n libmpv -p /sbin/ldconfig
 
@@ -136,6 +135,7 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
 %files -n libmpv
+%license LICENSE Copyright
 %{_libdir}/libmpv.so.*
 
 %files -n libmpv-devel
@@ -144,6 +144,9 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &>/dev/null || :
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Jun 28 2016 Sérgio Basto <sergio@serjux.com> - 0.18.0-1
+- Update to 0.18.0
+
 * Mon Apr 11 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.17.0-1
 - update to 0.17.0
 

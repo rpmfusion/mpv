@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.18.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -49,6 +49,10 @@ BuildRequires:  mesa-libEGL-devel
 %if 0%{?fedora} >= 23
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
+%endif
+
+%if 0%{?fedora} >= 24
+BuildRequires:  perl(Encode)
 %endif
 
 Requires:       hicolor-icon-theme
@@ -144,6 +148,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Jun 30 2016 Sérgio Basto <sergio@serjux.com> - 0.18.0-2
+- Add BR perl(Encode) to build on F24 (merge from Adrian Reber PR)
+
 * Tue Jun 28 2016 Sérgio Basto <sergio@serjux.com> - 0.18.0-1
 - Update to 0.18.0
 

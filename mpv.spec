@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.18.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -14,46 +14,52 @@ Patch0:         %{name}-config.patch
 Patch1:         %{name}-old-waf.patch
 
 BuildRequires:  pkgconfig(alsa)
-BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  pkgconfig(zlib)
-BuildRequires:  pkgconfig(gbm)
-BuildRequires:  pkgconfig(jack)
-BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  desktop-file-utils
+BuildRequires:  pkgconfig(dvdnav)
+BuildRequires:  pkgconfig(dvdread)
+BuildRequires:  pkgconfig(egl)
+BuildRequires:  pkgconfig(enca)
 BuildRequires:  ffmpeg-devel
-BuildRequires:  pkgconfig(lcms2)
-BuildRequires:  pkgconfig(libcdio)
-BuildRequires:  pkgconfig(libcdio_paranoia)
+BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
-BuildRequires:  pkgconfig(xscrnsaver)
-BuildRequires:  pkgconfig(xinerama)
-BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(lcms2)
+BuildRequires:  pkgconfig(libarchive)
 BuildRequires:  pkgconfig(libass)
 BuildRequires:  pkgconfig(libbluray)
-BuildRequires:  pkgconfig(dvdnav)
+BuildRequires:  pkgconfig(libcdio)
+BuildRequires:  pkgconfig(libcdio_paranoia)
+BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libguess)
+BuildRequires:  libjpeg-turbo-devel
+BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
-BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(lua-5.1)
+BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(rubberband)
+BuildRequires:  pkgconfig(smbclient)
+BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
+BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
+BuildRequires:  pkgconfig(wayland-scanner)
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(xext)
+BuildRequires:  pkgconfig(xinerama)
 BuildRequires:  pkgconfig(xkbcommon)
-BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(xrandr)
+BuildRequires:  pkgconfig(xscrnsaver)
+BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(zlib)
 BuildRequires:  python-docutils
-BuildRequires:  waf
-BuildRequires:  wayland-devel
-BuildRequires:  mesa-libEGL-devel
 
-%if 0%{?fedora} >= 23
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
-%endif
-
-%if 0%{?fedora} >= 24
 BuildRequires:  perl(Encode)
-%endif
 
 Requires:       hicolor-icon-theme
 
@@ -64,18 +70,22 @@ input URL types are available to read input from a variety of sources other
 than disk files. Depending on platform, a variety of different video and audio
 output methods are supported.
 
-%package -n libmpv
+%package libs
 Summary: Dynamic library for Mpv frontends 
+Provides: libmpv = %{version}-%{release}
+Obsoletes: libmpv < %{version}-%{release}
 
-%description -n libmpv
+%description libs
 This package contains the dynamic library libmpv, which provides access to Mpv.
 
-%package -n libmpv-devel
+%package libs-devel
 Summary: Development package for libmpv
-Requires: libmpv%{_isa} = %{version}-%{release}
+Requires: mpv-libs%{_isa} = %{version}-%{release}
+Provides: libmpv-devel = %{version}-%{release}
+Obsoletes: libmpv-devel < %{version}-%{release}
 Requires: pkgconfig
 
-%description -n libmpv-devel
+%description libs-devel
 Libmpv development header files and libraries.
 
 %prep
@@ -106,26 +116,26 @@ waf build %{?_smp_mflags}
 %install
 waf install --destdir=%{buildroot}
 
-desktop-file-install etc/mpv.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
 
 %post
-/usr/bin/update-desktop-database &>/dev/null || :
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+/usr/bin/update-desktop-database &> /dev/null || :
+/bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
 
 %postun
 /usr/bin/update-desktop-database &> /dev/null || :
 if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+    /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 fi
 
 %posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 
-%post -n libmpv -p /sbin/ldconfig
+%post libs -p /sbin/ldconfig
 
-%postun -n libmpv -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 %files
 %docdir %{_docdir}/%{name}
@@ -138,16 +148,19 @@ fi
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
-%files -n libmpv
+%files libs
 %license LICENSE Copyright
 %{_libdir}/libmpv.so.*
 
-%files -n libmpv-devel
+%files libs-devel
 %{_includedir}/%{name}
 %{_libdir}/libmpv.so
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Jul 03 2016 Sérgio Basto <sergio@serjux.com> - 0.18.0-3
+- BRs in alphabetical order, rename of sub-packages libs and other improvements
+
 * Thu Jun 30 2016 Sérgio Basto <sergio@serjux.com> - 0.18.0-2
 - Add BR perl(Encode) to build on F24 (merge from Adrian Reber PR)
 

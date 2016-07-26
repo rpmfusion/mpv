@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.18.0
-Release:        3%{?dist}
+Version:        0.18.1
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -8,10 +8,6 @@ Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.ta
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
-
-# Upstream commit to use waf >= 1.8 (reverted, rebased)
-# See https://github.com/mpv-player/mpv/issues/1363
-Patch1:         %{name}-old-waf.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -92,10 +88,6 @@ Libmpv development header files and libraries.
 %setup -q
 %patch0 -p1
 
-%if 0%{?fedora} < 22
-%patch1 -p1
-%endif
-
 
 %build
 CCFLAGS="%{optflags}" \
@@ -158,6 +150,10 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Jul 26 2016 Miro Hrončok <mhroncok@redhat.com> - 0.18.1-1
+- Update to 0.18.1
+- Remove patch for Fedora < 22
+
 * Sun Jul 03 2016 Sérgio Basto <sergio@serjux.com> - 0.18.0-3
 - BRs in alphabetical order, rename of sub-packages libs and other improvements
 

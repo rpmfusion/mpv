@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.18.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -150,6 +150,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Jul 30 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.18.1-2
+- Rebuilt for ffmpeg-3.1.1
+
 * Tue Jul 26 2016 Miro Hrončok <mhroncok@redhat.com> - 0.18.1-1
 - Update to 0.18.1
 - Remove patch for Fedora < 22

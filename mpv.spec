@@ -1,10 +1,10 @@
 Name:           mpv
-Version:        0.18.1
-Release:        2%{?dist}
+Version:        0.19.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
-Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz
+Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -79,7 +79,6 @@ Summary: Development package for libmpv
 Requires: mpv-libs%{_isa} = %{version}-%{release}
 Provides: libmpv-devel = %{version}-%{release}
 Obsoletes: libmpv-devel < %{version}-%{release}
-Requires: pkgconfig
 
 %description libs-devel
 Libmpv development header files and libraries.
@@ -90,7 +89,8 @@ Libmpv development header files and libraries.
 
 
 %build
-CCFLAGS="%{optflags}" \
+CFLAGS="${RPM_OPT_FLAGS}" \
+LDFLAGS="${RPM_LD_FLAGS}" \
 waf configure \
     --prefix=%{_prefix} \
     --bindir=%{_bindir} \
@@ -103,7 +103,7 @@ waf configure \
     --enable-sdl2 \
     --enable-encoding
 
-waf build %{?_smp_mflags}
+waf -v build %{?_smp_mflags}
 
 %install
 waf install --destdir=%{buildroot}
@@ -150,6 +150,14 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Aug 16 2016 Leigh Scott <leigh123linux@googlemail.com> - 0.19.0-3
+- Update to 0.19.0
+- Add LDFLAGS so build is hardened
+- Fix CFLAGS
+- Make build verbose
+- Remove Requires pkgconfig from devel sub-package
+- Fix source tag
+
 * Sat Jul 30 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.18.1-2
 - Rebuilt for ffmpeg-3.1.1
 

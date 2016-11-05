@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.21.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -150,6 +150,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Nov 05 2016 Leigh Scott <leigh123linux@googlemail.com> - 0.21.0-2
+- Rebuilt for new ffmpeg
+
 * Thu Oct 20 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.21.0-1
 - update to 0.21.0
 

@@ -58,6 +58,7 @@ BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)
 
 Requires:       hicolor-icon-theme
+Provides:       mplayer-backend
 
 %description
 Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety
@@ -152,6 +153,7 @@ fi
 %changelog
 * Sat Nov 05 2016 Leigh Scott <leigh123linux@googlemail.com> - 0.21.0-2
 - Rebuilt for new ffmpeg
+- Add provides mplayer-backend (rfbz#4284)
 
 * Thu Oct 20 2016 Evgeny Lensky <surfernsk@gmail.com> - 0.21.0-1
 - update to 0.21.0

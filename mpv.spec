@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.22.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -8,6 +8,9 @@ Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.ta
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
+
+# https://github.com/negativo17/mpv/blob/master/mpv-do-not-fail-with-minor-ffmpeg-updates.patch
+Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -85,8 +88,7 @@ Obsoletes: libmpv-devel < %{version}-%{release}
 Libmpv development header files and libraries.
 
 %prep
-%setup -q
-%patch0 -p1
+%autosetup -p1
 
 
 %build
@@ -151,6 +153,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Dec 03 2016 leigh scott <leigh123linux@googlemail.com> - 0.22.0-2
+- Add patch to relax ffmpeg version check
+
 * Sat Nov 26 2016 leigh scott <leigh123linux@googlemail.com> - 0.22.0-1
 - update to 0.22.0
 

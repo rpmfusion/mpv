@@ -12,6 +12,11 @@ Patch0:         %{name}-config.patch
 # https://github.com/negativo17/mpv/blob/master/mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 
+%if 0%{?fedora} < 26
+# Reverse of https://github.com/mpv-player/mpv/commit/3eceac2eab0b42ee082a0b615ebf40a21f0fb915
+Patch2:         %{name}-old-ffmpeg.patch
+%endif
+
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(dvdnav)

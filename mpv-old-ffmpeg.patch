@@ -1,0 +1,738 @@
+diff --git a/audio/decode/ad_lavc.c b/audio/decode/ad_lavc.c
+index c4d3a2a..59cbc8a 100644
+--- a/audio/decode/ad_lavc.c
++++ b/audio/decode/ad_lavc.c
+@@ -206,6 +206,7 @@ static int decode_packet(struct dec_audio *da, struct demux_packet *mpkt,
+     if (priv->needs_reset)
+         control(da, ADCTRL_RESET, NULL);
+ 
++#if HAVE_AVCODEC_NEW_CODEC_API
+     int ret = avcodec_send_packet(avctx, &pkt);
+     if (ret >= 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+         if (ret >= 0 && mpkt)
+@@ -218,6 +219,24 @@ static int decode_packet(struct dec_audio *da, struct demux_packet *mpkt,
+         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+             ret = 0;
+     }
++#else
++    int ret = avcodec_decode_audio4(avctx, priv->avframe, &got_frame, &pkt);
++    if (mpkt) {
++        // At least "shorten" decodes sub-frames, instead of the whole packet.
++        // At least "mpc8" can return 0 and wants the packet again next time.
++        if (ret >= 0) {
++            ret = FFMIN(ret, mpkt->len); // sanity check against decoder overreads
++            mpkt->buffer += ret;
++            mpkt->len    -= ret;
++            mpkt->pts = MP_NOPTS_VALUE; // don't reset PTS next time
++        }
++        // LATM may need many packets to find mux info
++        if (ret == AVERROR(EAGAIN)) {
++            mpkt->len = 0;
++            return 0;
++        }
++    }
++#endif
+     if (ret < 0) {
+         MP_ERR(da, "Error decoding audio.\n");
+         return -1;
+@@ -225,7 +244,8 @@ static int decode_packet(struct dec_audio *da, struct demux_packet *mpkt,
+     if (!got_frame)
+         return 0;
+ 
+-    double out_pts = mp_pts_from_av(priv->avframe->pts, &priv->codec_timebase);
++    double out_pts = mp_pts_from_av(MP_AVFRAME_DEC_PTS(priv->avframe),
++                                    &priv->codec_timebase);
+ 
+     struct mp_audio *mpframe = mp_audio_from_avframe(priv->avframe);
+     if (!mpframe)
+diff --git a/audio/decode/ad_spdif.c b/audio/decode/ad_spdif.c
+index 30c7883..7af61ed 100644
+--- a/audio/decode/ad_spdif.c
++++ b/audio/decode/ad_spdif.c
+@@ -115,10 +115,16 @@ static int determine_codec_profile(struct dec_audio *da, AVPacket *pkt)
+         goto done;
+     }
+ 
++#if HAVE_AVCODEC_NEW_CODEC_API
+     if (avcodec_send_packet(ctx, pkt) < 0)
+         goto done;
+     if (avcodec_receive_frame(ctx, frame) < 0)
+         goto done;
++#else
++    int got_frame = 0;
++    if (avcodec_decode_audio4(ctx, frame, &got_frame, pkt) < 1 || !got_frame)
++        goto done;
++#endif
+ 
+     profile = ctx->profile;
+ 
+@@ -171,7 +177,11 @@ static int init_filter(struct dec_audio *da, AVPacket *pkt)
+     if (!stream)
+         goto fail;
+ 
++#if HAVE_AVCODEC_HAS_CODECPAR
+     stream->codecpar->codec_id = spdif_ctx->codec_id;
++#else
++    stream->codec->codec_id = spdif_ctx->codec_id;
++#endif
+ 
+     AVDictionary *format_opts = NULL;
+ 
+diff --git a/audio/filter/af_lavcac3enc.c b/audio/filter/af_lavcac3enc.c
+index 9df5adb..0a7c5d4 100644
+--- a/audio/filter/af_lavcac3enc.c
++++ b/audio/filter/af_lavcac3enc.c
+@@ -280,6 +280,7 @@ static int filter_out(struct af_instance *af)
+     AVPacket pkt = {0};
+     av_init_packet(&pkt);
+ 
++#if HAVE_AVCODEC_NEW_CODEC_API
+     // Send input as long as it wants.
+     while (1) {
+         err = read_input_frame(af, frame);
+@@ -309,6 +310,21 @@ static int filter_out(struct af_instance *af)
+         MP_FATAL(af, "Encode failed.\n");
+         goto done;
+     }
++#else
++    err = read_input_frame(af, frame);
++    if (err < 0)
++        goto done;
++    if (err == 0)
++        goto done;
++    err = -1;
++    int ok;
++    int lavc_ret = avcodec_encode_audio2(s->lavc_actx, &pkt, frame, &ok);
++    s->input->samples = 0;
++    if (lavc_ret < 0 || !ok) {
++        MP_FATAL(af, "Encode failed.\n");
++        goto done;
++    }
++#endif
+ 
+     MP_DBG(af, "avcodec_encode_audio got %d, pending %d.\n",
+            pkt.size, s->pending->samples + s->input->samples);
+diff --git a/audio/filter/af_lavrresample.c b/audio/filter/af_lavrresample.c
+index 828be66..dc5d1a0 100644
+--- a/audio/filter/af_lavrresample.c
++++ b/audio/filter/af_lavrresample.c
+@@ -111,7 +111,12 @@ static double get_delay(struct af_resample *s)
+ }
+ static int get_out_samples(struct af_resample *s, int in_samples)
+ {
++#if LIBSWRESAMPLE_VERSION_MAJOR > 1 || LIBSWRESAMPLE_VERSION_MINOR >= 2
+     return swr_get_out_samples(s->avrctx, in_samples);
++#else
++    return av_rescale_rnd(in_samples, s->out_rate, s->in_rate, AV_ROUND_UP)
++           + swr_get_delay(s->avrctx, s->out_rate);
++#endif
+ }
+ #endif
+ 
+diff --git a/audio/out/ao_lavc.c b/audio/out/ao_lavc.c
+index 4dbc55a..8ae1317 100644
+--- a/audio/out/ao_lavc.c
++++ b/audio/out/ao_lavc.c
+@@ -258,6 +258,7 @@ static void encode_audio_and_write(struct ao *ao, AVFrame *frame)
+     struct priv *ac = ao->priv;
+     AVPacket packet = {0};
+ 
++#if HAVE_AVCODEC_NEW_CODEC_API
+     int status = avcodec_send_frame(ac->codec, frame);
+     if (status < 0) {
+         MP_ERR(ao, "error encoding at %d %d/%d\n",
+@@ -296,6 +297,28 @@ static void encode_audio_and_write(struct ao *ao, AVFrame *frame)
+         write_packet(ao, &packet);
+         av_packet_unref(&packet);
+     }
++#else
++    av_init_packet(&packet);
++    int got_packet = 0;
++    int status = avcodec_encode_audio2(ac->codec, &packet, frame, &got_packet);
++    if (status < 0) {
++        MP_ERR(ao, "error encoding at %d %d/%d\n",
++               frame ? (int) frame->pts : -1,
++               ac->codec->time_base.num,
++               ac->codec->time_base.den);
++        return;
++    }
++    if (!got_packet) {
++        return;
++    }
++    if (frame) {
++        if (ac->savepts == AV_NOPTS_VALUE)
++            ac->savepts = frame->pts;
++    }
++    encode_lavc_write_stats(ao->encode_lavc_ctx, ac->codec);
++    write_packet(ao, &packet);
++    av_packet_unref(&packet);
++#endif
+ }
+ 
+ // must get exactly ac->aframesize amount of data
+diff --git a/common/av_common.c b/common/av_common.c
+index f2f4349..27a3319 100644
+--- a/common/av_common.c
++++ b/common/av_common.c
+@@ -77,8 +77,13 @@ void mp_copy_lav_codec_headers(AVCodecContext *avctx, AVCodecContext *st)
+ // other demuxers must be handled manually.
+ void mp_set_lav_codec_headers(AVCodecContext *avctx, struct mp_codec_params *c)
+ {
++#if HAVE_AVCODEC_HAS_CODECPAR
+     if (c->lav_codecpar)
+         avcodec_parameters_to_context(avctx, c->lav_codecpar);
++#else
++    if (c->lav_headers)
++        mp_copy_lav_codec_headers(avctx, c->lav_headers);
++#endif
+ }
+ 
+ // Pick a "good" timebase, which will be used to convert double timestamps
+diff --git a/common/av_common.h b/common/av_common.h
+index 4b13dcd..b5ca034 100644
+--- a/common/av_common.h
++++ b/common/av_common.h
+@@ -46,4 +46,13 @@ void mp_set_avdict(struct AVDictionary **dict, char **kv);
+ void mp_avdict_print_unset(struct mp_log *log, int msgl, struct AVDictionary *d);
+ int mp_set_avopts(struct mp_log *log, void *avobj, char **kv);
+ 
++#if (LIBAVCODEC_VERSION_MICRO >= 100 &&                         \
++     LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 61, 100)) ||  \
++    (LIBAVCODEC_VERSION_MICRO < 100 &&                          \
++     LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 24, 0))
++#define MP_AVFRAME_DEC_PTS(frame) ((frame)->pts)
++#else
++#define MP_AVFRAME_DEC_PTS(frame) ((frame)->pkt_pts)
++#endif
++
+ #endif
+diff --git a/common/av_log.c b/common/av_log.c
+index e2a4c33..64ce26d 100644
+--- a/common/av_log.c
++++ b/common/av_log.c
+@@ -218,7 +218,9 @@ bool print_libav_versions(struct mp_log *log, int v)
+         mp_msg(log, v, "\n");
+     }
+ 
++#if HAVE_AV_VERSION_INFO
+     mp_msg(log, v, "%s version: %s\n", LIB_PREFIX, av_version_info());
++#endif
+ 
+     return !mismatch;
+ }
+diff --git a/common/encode_lavc.c b/common/encode_lavc.c
+index 7e116e3..d052385 100644
+--- a/common/encode_lavc.c
++++ b/common/encode_lavc.c
+@@ -595,7 +595,12 @@ int encode_lavc_alloc_stream(struct encode_lavc_context *ctx,
+             }
+             return -1;
+         }
++#if HAVE_AVCODEC_HAS_CODECPAR
+         ctx->vcc = avcodec_alloc_context3(ctx->vc);
++#else
++        avcodec_get_context_defaults3(ctx->vst->codec, ctx->vc);
++        ctx->vcc = ctx->vst->codec;
++#endif
+ 
+         // Using codec->time_base is deprecated, but needed for older lavf.
+         ctx->vst->time_base = ctx->timebase;
+@@ -630,7 +635,12 @@ int encode_lavc_alloc_stream(struct encode_lavc_context *ctx,
+             }
+             return -1;
+         }
++#if HAVE_AVCODEC_HAS_CODECPAR
+         ctx->acc = avcodec_alloc_context3(ctx->ac);
++#else
++        avcodec_get_context_defaults3(ctx->ast->codec, ctx->ac);
++        ctx->acc = ctx->ast->codec;
++#endif
+ 
+         // Using codec->time_base is deprecated, but needed for older lavf.
+         ctx->ast->time_base = ctx->timebase;
+@@ -698,8 +708,10 @@ int encode_lavc_open_codec(struct encode_lavc_context *ctx,
+         }
+ 
+         ret = avcodec_open2(codec, ctx->vc, &ctx->voptions);
++#if HAVE_AVCODEC_HAS_CODECPAR
+         if (ret >= 0)
+             ret = avcodec_parameters_from_context(ctx->vst->codecpar, codec);
++#endif
+ 
+         // complain about all remaining options, then free the dict
+         for (de = NULL; (de = av_dict_get(ctx->voptions, "", de,
+@@ -735,8 +747,10 @@ int encode_lavc_open_codec(struct encode_lavc_context *ctx,
+         }
+ 
+         ret = avcodec_open2(codec, ctx->ac, &ctx->aoptions);
++#if HAVE_AVCODEC_HAS_CODECPAR
+         if (ret >= 0)
+             ret = avcodec_parameters_from_context(ctx->ast->codecpar, codec);
++#endif
+ 
+         // complain about all remaining options, then free the dict
+         for (de = NULL; (de = av_dict_get(ctx->aoptions, "", de,
+@@ -812,7 +826,11 @@ int encode_lavc_write_frame(struct encode_lavc_context *ctx, AVStream *stream,
+         (int)packet->size);
+ 
+ 
++#if HAVE_AVCODEC_HAS_CODECPAR
+     switch (stream->codecpar->codec_type) {
++#else
++    switch (stream->codec->codec_type) {
++#endif
+         case AVMEDIA_TYPE_VIDEO:
+             ctx->vbytes += packet->size;
+             ++ctx->frames;
+diff --git a/demux/demux_lavf.c b/demux/demux_lavf.c
+index 1249563..94bcd3f 100644
+--- a/demux/demux_lavf.c
++++ b/demux/demux_lavf.c
+@@ -577,8 +577,13 @@ static void handle_new_stream(demuxer_t *demuxer, int i)
+     AVFormatContext *avfc = priv->avfc;
+     AVStream *st = avfc->streams[i];
+     struct sh_stream *sh = NULL;
++#if HAVE_AVCODEC_HAS_CODECPAR
+     AVCodecParameters *codec = st->codecpar;
+     int lavc_delay = codec->initial_padding;
++#else
++    AVCodecContext *codec = st->codec;
++    int lavc_delay = codec->delay;
++#endif
+ 
+     switch (codec->codec_type) {
+     case AVMEDIA_TYPE_AUDIO: {
+@@ -674,9 +679,17 @@ static void handle_new_stream(demuxer_t *demuxer, int i)
+         sh->ff_index = st->index;
+         sh->codec->codec = mp_codec_from_av_codec_id(codec->codec_id);
+         sh->codec->codec_tag = codec->codec_tag;
++#if HAVE_AVCODEC_HAS_CODECPAR
+         sh->codec->lav_codecpar = avcodec_parameters_alloc();
+         if (sh->codec->lav_codecpar)
+             avcodec_parameters_copy(sh->codec->lav_codecpar, codec);
++#else
++        sh->codec->codec = mp_codec_from_av_codec_id(codec->codec_id);
++        sh->codec->codec_tag = codec->codec_tag;
++        sh->codec->lav_headers = avcodec_alloc_context3(NULL);
++        if (sh->codec->lav_headers)
++            mp_copy_lav_codec_headers(sh->codec->lav_headers, codec);
++#endif
+         sh->codec->native_tb_num = st->time_base.num;
+         sh->codec->native_tb_den = st->time_base.den;
+ 
+@@ -851,9 +864,11 @@ static int demux_open_lavf(demuxer_t *demuxer, enum demux_check check)
+         .opaque = demuxer,
+     };
+ 
++#if HAVE_AVFORMAT_IOOPEN
+     avfc->opaque = demuxer;
+     if (!demuxer->access_references)
+         avfc->io_open = block_io_open;
++#endif
+ 
+     mp_set_avdict(&dopts, lavfdopts->avopts);
+ 
+@@ -938,9 +953,14 @@ static int demux_lavf_fill_buffer(demuxer_t *demux)
+     if (pkt->dts != AV_NOPTS_VALUE)
+         dp->dts = pkt->dts * av_q2d(st->time_base);
+     dp->duration = pkt->duration * av_q2d(st->time_base);
++#if !HAVE_AV_AVPACKET_INT64_DURATION
++    if (pkt->convergence_duration > 0)
++        dp->duration = pkt->convergence_duration * av_q2d(st->time_base);
++#endif
+     dp->pos = pkt->pos;
+     dp->keyframe = pkt->flags & AV_PKT_FLAG_KEY;
+-#if LIBAVFORMAT_VERSION_MICRO >= 100
++#if LIBAVFORMAT_VERSION_MICRO >= 100 && \
++    LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 50, 100)
+     if (pkt->flags & AV_PKT_FLAG_DISCARD)
+         MP_ERR(demux, "Edit lists are not correctly supported (FFmpeg issue).\n");
+ #endif
+@@ -1121,8 +1141,12 @@ static void demux_close_lavf(demuxer_t *demuxer)
+             av_freep(&priv->pb->buffer);
+         av_freep(&priv->pb);
+         for (int n = 0; n < priv->num_streams; n++) {
+-            if (priv->streams[n])
++            if (priv->streams[n]) {
++                avcodec_free_context(&priv->streams[n]->codec->lav_headers);
++#if HAVE_AVCODEC_HAS_CODECPAR
+                 avcodec_parameters_free(&priv->streams[n]->codec->lav_codecpar);
++#endif
++            }
+         }
+         if (priv->own_stream)
+             free_stream(priv->stream);
+diff --git a/demux/stheader.h b/demux/stheader.h
+index 26c1246..240be72 100644
+--- a/demux/stheader.h
++++ b/demux/stheader.h
+@@ -71,6 +71,8 @@ struct mp_codec_params {
+     int extradata_size;
+ 
+     // Codec specific header data (set by demux_lavf.c only)
++    // Which one is in use depends on HAVE_AVCODEC_HAS_CODECPAR.
++    struct AVCodecContext *lav_headers;
+     struct AVCodecParameters *lav_codecpar;
+ 
+     // Timestamp granularity for converting double<->rational timestamps.
+diff --git a/player/command.c b/player/command.c
+index 74c7e26..36850a2 100644
+--- a/player/command.c
++++ b/player/command.c
+@@ -3569,7 +3569,11 @@ static int mp_property_configuration(void *ctx, struct m_property *prop,
+ static int mp_property_ffmpeg(void *ctx, struct m_property *prop,
+                                int action, void *arg)
+ {
++#if HAVE_AV_VERSION_INFO
+     return m_property_strdup_ro(action, arg, av_version_info());
++#else
++    return M_PROPERTY_UNAVAILABLE;
++#endif
+ }
+ 
+ static int mp_property_alias(void *ctx, struct m_property *prop,
+diff --git a/sub/lavc_conv.c b/sub/lavc_conv.c
+index 3ff350c..3e0165a 100644
+--- a/sub/lavc_conv.c
++++ b/sub/lavc_conv.c
+@@ -210,6 +210,9 @@ static int parse_webvtt(AVPacket *in, AVPacket *pkt)
+ 
+     pkt->pts = in->pts;
+     pkt->duration = in->duration;
++#if !HAVE_AV_AVPACKET_INT64_DURATION
++    pkt->convergence_duration = in->convergence_duration;
++#endif
+     return 0;
+ }
+ 
+diff --git a/sub/sd_lavc.c b/sub/sd_lavc.c
+index 4ce8c55..2c1b327 100644
+--- a/sub/sd_lavc.c
++++ b/sub/sd_lavc.c
+@@ -263,8 +263,13 @@ static void read_sub_bitmaps(struct sd *sd, struct sub *sub)
+         struct sub_bitmap *b = &sub->inbitmaps[i];
+         struct pos pos = priv->packer->result[i];
+         struct AVSubtitleRect *r = b->bitmap;
++#if HAVE_AV_SUBTITLE_NOPICT
+         uint8_t **data = r->data;
+         int *linesize = r->linesize;
++#else
++        uint8_t **data = r->pict.data;
++        int *linesize = r->pict.linesize;
++#endif
+         b->w = r->w;
+         b->h = r->h;
+         b->x = r->x;
+diff --git a/video/csputils.c b/video/csputils.c
+index 6835aee..8f6a9e3 100644
+--- a/video/csputils.c
++++ b/video/csputils.c
+@@ -190,8 +190,10 @@ enum mp_csp_trc avcol_trc_to_mp_csp_trc(int avtrc)
+     case AVCOL_TRC_LINEAR:       return MP_CSP_TRC_LINEAR;
+     case AVCOL_TRC_GAMMA22:      return MP_CSP_TRC_GAMMA22;
+     case AVCOL_TRC_GAMMA28:      return MP_CSP_TRC_GAMMA28;
++#if HAVE_AVUTIL_HDR
+     case AVCOL_TRC_SMPTEST2084:  return MP_CSP_TRC_SMPTE_ST2084;
+     case AVCOL_TRC_ARIB_STD_B67: return MP_CSP_TRC_ARIB_STD_B67;
++#endif
+     default:                     return MP_CSP_TRC_AUTO;
+     }
+ }
+@@ -240,8 +242,10 @@ int mp_csp_trc_to_avcol_trc(enum mp_csp_trc trc)
+     case MP_CSP_TRC_LINEAR:       return AVCOL_TRC_LINEAR;
+     case MP_CSP_TRC_GAMMA22:      return AVCOL_TRC_GAMMA22;
+     case MP_CSP_TRC_GAMMA28:      return AVCOL_TRC_GAMMA28;
++#if HAVE_AVUTIL_HDR
+     case MP_CSP_TRC_SMPTE_ST2084: return AVCOL_TRC_SMPTEST2084;
+     case MP_CSP_TRC_ARIB_STD_B67: return AVCOL_TRC_ARIB_STD_B67;
++#endif
+     default:                      return AVCOL_TRC_UNSPECIFIED;
+     }
+ }
+diff --git a/video/decode/vd_lavc.c b/video/decode/vd_lavc.c
+index cc3bbc8..ef5b30c 100644
+--- a/video/decode/vd_lavc.c
++++ b/video/decode/vd_lavc.c
+@@ -662,9 +662,11 @@ static enum AVPixelFormat get_format_hwdec(struct AVCodecContext *avctx,
+         MP_VERBOSE(vd, " %s", av_get_pix_fmt_name(fmt[i]));
+     MP_VERBOSE(vd, "\n");
+ 
++#if HAVE_AVCODEC_PROFILE_NAME
+     const char *profile = avcodec_profile_name(avctx->codec_id, avctx->profile);
+     MP_VERBOSE(vd, "Codec profile: %s (0x%x)\n", profile ? profile : "unknown",
+                avctx->profile);
++#endif
+ 
+     assert(ctx->hwdec);
+ 
+@@ -791,6 +793,7 @@ static void decode(struct dec_video *vd, struct demux_packet *packet,
+         reset_avctx(vd);
+ 
+     hwdec_lock(ctx);
++#if HAVE_AVCODEC_NEW_CODEC_API
+     ret = avcodec_send_packet(avctx, packet ? &pkt : NULL);
+     if (ret >= 0 || ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+         if (ret >= 0)
+@@ -803,6 +806,10 @@ static void decode(struct dec_video *vd, struct demux_packet *packet,
+     } else {
+         consumed = true;
+     }
++#else
++    ret = avcodec_decode_video2(avctx, ctx->pic, &got_picture, &pkt);
++    consumed = true;
++#endif
+     hwdec_unlock(ctx);
+ 
+     // Reset decoder if it was fully flushed. Caller might send more flush
+@@ -856,7 +863,7 @@ static void decode(struct dec_video *vd, struct demux_packet *packet,
+         return;
+     }
+     assert(mpi->planes[0] || mpi->planes[3]);
+-    mpi->pts = mp_pts_from_av(ctx->pic->pts, &ctx->codec_timebase);
++    mpi->pts = mp_pts_from_av(MP_AVFRAME_DEC_PTS(ctx->pic), &ctx->codec_timebase);
+     mpi->dts = mp_pts_from_av(ctx->pic->pkt_dts, &ctx->codec_timebase);
+ 
+ #if LIBAVCODEC_VERSION_MICRO >= 100
+diff --git a/video/fmt-conversion.c b/video/fmt-conversion.c
+index 7a9e208..8b991c5 100644
+--- a/video/fmt-conversion.c
++++ b/video/fmt-conversion.c
+@@ -73,8 +73,10 @@ static const struct {
+ 
+     {IMGFMT_XYZ12,   AV_PIX_FMT_XYZ12},
+ 
++#ifdef AV_PIX_FMT_RGBA64
+     {IMGFMT_RGBA64,  AV_PIX_FMT_RGBA64},
+     {IMGFMT_BGRA64,  AV_PIX_FMT_BGRA64},
++#endif
+ 
+ #if LIBAVUTIL_VERSION_MICRO >= 100
+     {IMGFMT_BGR0,  AV_PIX_FMT_BGR0},
+@@ -88,7 +90,9 @@ static const struct {
+     {IMGFMT_0BGR,  AV_PIX_FMT_ABGR},
+ #endif
+ 
++#ifdef AV_PIX_FMT_YA16
+     {IMGFMT_YA16,  AV_PIX_FMT_YA16},
++#endif
+ 
+     {IMGFMT_VDPAU, AV_PIX_FMT_VDPAU},
+ #if HAVE_VIDEOTOOLBOX_HWACCEL
+@@ -99,11 +103,15 @@ static const struct {
+ #if HAVE_D3D_HWACCEL
+     {IMGFMT_D3D11VA, AV_PIX_FMT_D3D11VA_VLD},
+ #endif
++#if HAVE_AV_PIX_FMT_MMAL
+     {IMGFMT_MMAL, AV_PIX_FMT_MMAL},
++#endif
+ #if HAVE_CUDA_HWACCEL
+     {IMGFMT_CUDA, AV_PIX_FMT_CUDA},
+ #endif
++#ifdef AV_PIX_FMT_P010
+     {IMGFMT_P010, AV_PIX_FMT_P010},
++#endif
+ #ifdef AV_PIX_FMT_P016
+     {IMGFMT_P016, AV_PIX_FMT_P016},
+ #endif
+diff --git a/video/image_writer.c b/video/image_writer.c
+index 59d986f..8a5980c 100644
+--- a/video/image_writer.c
++++ b/video/image_writer.c
+@@ -133,6 +133,7 @@ static bool write_lavc(struct image_writer_ctx *ctx, mp_image_t *image, FILE *fp
+         pic->color_trc = mp_csp_trc_to_avcol_trc(image->params.color.gamma);
+     }
+ 
++#if HAVE_AVCODEC_NEW_CODEC_API
+     int ret = avcodec_send_frame(avctx, pic);
+     if (ret < 0)
+         goto error_exit;
+@@ -141,6 +142,11 @@ static bool write_lavc(struct image_writer_ctx *ctx, mp_image_t *image, FILE *fp
+     if (ret < 0)
+         goto error_exit;
+     got_output = 1;
++#else
++    int ret = avcodec_encode_video2(avctx, &pkt, pic, &got_output);
++    if (ret < 0)
++        goto error_exit;
++#endif
+ 
+     fwrite(pkt.data, pkt.size, 1, fp);
+ 
+diff --git a/video/img_format.c b/video/img_format.c
+index 0232f53..24545a8 100644
+--- a/video/img_format.c
++++ b/video/img_format.c
+@@ -161,14 +161,21 @@ struct mp_imgfmt_desc mp_imgfmt_get_desc(int mpfmt)
+     int shift = -1; // shift for all components, or -1 if not uniform
+     for (int c = 0; c < pd->nb_components; c++) {
+         AVComponentDescriptor d = pd->comp[c];
++#if HAVE_AV_NEW_PIXDESC
++        int depth = d.depth;
++        int step = d.step;
++#else
++        int depth = d.depth_minus1 + 1;
++        int step = d.step_minus1 + 1;
++#endif
+         // multiple components per plane -> Y is definitive, ignore chroma
+         if (!desc.bpp[d.plane])
+-            desc.bpp[d.plane] = d.step * el_size;
+-        planedepth[d.plane] += d.depth;
+-        need_endian |= (d.depth + d.shift) > 8;
++            desc.bpp[d.plane] = step * el_size;
++        planedepth[d.plane] += depth;
++        need_endian |= (depth + d.shift) > 8;
+         if (c == 0)
+-            desc.component_bits = d.depth;
+-        if (d.depth != desc.component_bits)
++            desc.component_bits = depth;
++        if (depth != desc.component_bits)
+             desc.component_bits = 0;
+         if (c == 0)
+             shift = d.shift;
+diff --git a/video/mp_image.c b/video/mp_image.c
+index 2c4627c..5733907 100644
+--- a/video/mp_image.c
++++ b/video/mp_image.c
+@@ -745,7 +745,9 @@ struct mp_image *mp_image_from_av_frame(struct AVFrame *av_frame)
+     mp_image_copy_fields_from_av_frame(&t, av_frame);
+     for (int p = 0; p < MP_MAX_PLANES; p++)
+         t.bufs[p] = av_frame->buf[p];
++#if HAVE_AVUTIL_HAS_HWCONTEXT
+     t.hwctx = av_frame->hw_frames_ctx;
++#endif
+     return mp_image_new_ref(&t);
+ }
+ 
+@@ -762,7 +764,9 @@ struct AVFrame *mp_image_to_av_frame(struct mp_image *img)
+     mp_image_copy_fields_to_av_frame(frame, new_ref);
+     for (int p = 0; p < MP_MAX_PLANES; p++)
+         frame->buf[p] = new_ref->bufs[p];
++#if HAVE_AVUTIL_HAS_HWCONTEXT
+     frame->hw_frames_ctx = new_ref->hwctx;
++#endif
+     *new_ref = (struct mp_image){0};
+     talloc_free(new_ref);
+     return frame;
+diff --git a/video/out/vo_lavc.c b/video/out/vo_lavc.c
+index 5c7406d..1721136 100644
+--- a/video/out/vo_lavc.c
++++ b/video/out/vo_lavc.c
+@@ -241,6 +241,7 @@ static void encode_video_and_write(struct vo *vo, AVFrame *frame)
+     struct priv *vc = vo->priv;
+     AVPacket packet = {0};
+ 
++#if HAVE_AVCODEC_NEW_CODEC_API
+     int status = avcodec_send_frame(vc->codec, frame);
+     if (status < 0) {
+         MP_ERR(vo, "error encoding at %d %d/%d\n",
+@@ -275,6 +276,24 @@ static void encode_video_and_write(struct vo *vo, AVFrame *frame)
+         write_packet(vo, &packet);
+         av_packet_unref(&packet);
+     }
++#else
++    av_init_packet(&packet);
++    int got_packet = 0;
++    int status = avcodec_encode_video2(vc->codec, &packet, frame, &got_packet);
++    if (status < 0) {
++        MP_ERR(vo, "error encoding at %d %d/%d\n",
++               frame ? (int) frame->pts : -1,
++               vc->codec->time_base.num,
++               vc->codec->time_base.den);
++        return;
++    }
++    if (!got_packet) {
++        return;
++    }
++    encode_lavc_write_stats(vo->encode_lavc_ctx, vc->codec);
++    write_packet(vo, &packet);
++    av_packet_unref(&packet);
++#endif
+ }
+ 
+ static void draw_image_unlocked(struct vo *vo, mp_image_t *mpi)
+diff --git a/wscript b/wscript
+index 94db7e2..b5ca5e2 100644
+--- a/wscript
++++ b/wscript
+@@ -463,13 +463,80 @@ FFmpeg/Libav libraries. You need at least {0}. Aborting.".format(libav_versions_
+         'func': check_statement('libavutil/frame.h',
+                                 'enum AVFrameSideDataType type = AV_FRAME_DATA_SKIP_SAMPLES',
+                                 use='libav')
++    }, {
++        'name': 'av-pix-fmt-mmal',
++        'desc': 'libavutil AV_PIX_FMT_MMAL',
++        'func': check_statement('libavutil/pixfmt.h',
++                                'int x = AV_PIX_FMT_MMAL',
++                                use='libav'),
++    }, {
++        'name': 'av-version-info',
++        'desc': 'libavtuil av_version_info()',
++        'func': check_statement('libavutil/avutil.h',
++                                'const char *x = av_version_info()',
++                                use='libav'),
++    }, {
++        'name': 'av-new-pixdesc',
++        'desc': 'libavutil new pixdesc fields',
++        'func': check_statement('libavutil/pixdesc.h',
++                                'AVComponentDescriptor d; int x = d.depth',
++                                use='libav'),
++    }, {
++        'name': 'av-avpacket-int64-duration',
++        'desc': 'libavcodec 64 bit AVPacket.duration',
++        'func': check_statement('libavcodec/avcodec.h',
++                                'int x[(int)sizeof(((AVPacket){0}).duration) - 7]',
++                                use='libav'),
++    }, {
++        'name': 'av-subtitle-nopict',
++        'desc': 'libavcodec AVSubtitleRect AVPicture removal',
++        'func': check_statement('libavcodec/avcodec.h',
++                                'AVSubtitleRect r = {.linesize={0}}',
++                                use='libav'),
++    }, {
++        'name': 'avcodec-profile-name',
++        'desc': 'libavcodec avcodec_profile_name()',
++        'func': check_statement('libavcodec/avcodec.h',
++                                'avcodec_profile_name(0,0)',
++                                use='libav'),
++    }, {
++        'name': 'avcodec-new-codec-api',
++        'desc': 'libavcodec decode/encode API',
++        'func': check_statement('libavcodec/avcodec.h',
++                                'avcodec_send_packet(0,0)',
++                                use='libav'),
++    }, {
++        'name': 'avcodec-has-codecpar',
++        'desc': 'libavcodec AVCodecParameters API',
++        'func': check_statement('libavformat/avformat.h',
++                                '(void)offsetof(AVStream, codecpar)',
++                                use='libav'),
++    }, {
++        'name': 'avutil-has-hwcontext',
++        'desc': 'libavutil AVHWFramesContext API',
++        'func': check_statement('libavutil/frame.h',
++                                '(void)offsetof(AVFrame, hw_frames_ctx)',
++                                use='libav'),
++    }, {
++        'name': 'avutil-hdr',
++        'desc': 'libavutil HDR TRCs',
++        'func': check_statement('libavutil/pixfmt.h',
++                                'AVCOL_TRC_SMPTEST2084,'
++                                'AVCOL_TRC_ARIB_STD_B67',
++                                use='libav'),
+     }, {
+         'name': 'avutil-mastering-metadata',
+         'desc': 'libavutil mastering display metadata struct',
+         'func': check_statement('libavutil/frame.h',
+                                 'AV_FRAME_DATA_MASTERING_DISPLAY_METADATA',
+                                 use='libav'),
+-    },
++    }, {
++        'name': 'avformat-ioopen',
++        'desc': 'libavformat io_open callback',
++        'func': check_statement('libavformat/avformat.h',
++                                'offsetof(AVFormatContext, io_open)',
++                                use='libav'),
++    }
+ ]
+ 
+ audio_output_features = [

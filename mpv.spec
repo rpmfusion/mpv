@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.23.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -14,6 +14,7 @@ Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 
 %if 0%{?fedora} < 26
 # Reverse of https://github.com/mpv-player/mpv/commit/3eceac2eab0b42ee082a0b615ebf40a21f0fb915
+#        and https://github.com/mpv-player/mpv/commit/a660e15c9b96bd46209e78b3c3d4cf136a039a50
 Patch2:         %{name}-old-ffmpeg.patch
 %endif
 
@@ -158,6 +159,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Jan 10 2017 Miro Hrončok <mhroncok@redhat.com> - 0.23.0-2
+- Fix AVAudioResampleContext: Unable to set resampling compensation (rfbz#4408)
+
 * Sat Dec 31 2016 Miro Hrončok <mhroncok@redhat.com> - 0.23.0-1
 - Update to 0.23.0
 

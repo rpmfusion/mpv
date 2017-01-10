@@ -1,5 +1,40 @@
+diff --git a/README.md b/README.md
+index d2b678c5c..41f0213ce 100644
+--- a/README.md
++++ b/README.md
+@@ -95,7 +95,7 @@ Essential dependencies (incomplete list):
+ - Audio output development headers (libasound/ALSA, pulseaudio)
+ - FFmpeg libraries (libavutil libavcodec libavformat libswscale libavfilter
+   and either libswresample or libavresample)
+-  At least FFmpeg 3.2.2 or Libav 12 is required.
++  At least FFmpeg 2.4.0 or Libav 11 is required.
+ - zlib
+ - iconv (normally provided by the system libc)
+ - libass (OSD, OSC, text subtitles)
+diff --git a/TOOLS/travis-deps b/TOOLS/travis-deps
+index 1d97f446b..20825568b 100755
+--- a/TOOLS/travis-deps
++++ b/TOOLS/travis-deps
+@@ -89,7 +89,7 @@ class Libav < TravisDepsBuilder
+     {
+       "libav-stable" => {
+         :action => :stable,
+-        :url    => 'http://libav.org/releases/libav-12.tar.gz'
++        :url    => 'http://libav.org/releases/libav-11.tar.gz'
+       },
+       "libav-git" => {
+         :action => :git,
+@@ -97,7 +97,7 @@ class Libav < TravisDepsBuilder
+       },
+       "ffmpeg-stable" => {
+         :action => :stable,
+-        :url    => 'http://www.ffmpeg.org/releases/ffmpeg-3.2.2.tar.gz'
++        :url    => 'http://www.ffmpeg.org/releases/ffmpeg-2.4.tar.gz'
+       },
+       "ffmpeg-git" => {
+         :action => :git,
 diff --git a/audio/decode/ad_lavc.c b/audio/decode/ad_lavc.c
-index c4d3a2a..59cbc8a 100644
+index c4d3a2ae7..59cbc8aba 100644
 --- a/audio/decode/ad_lavc.c
 +++ b/audio/decode/ad_lavc.c
 @@ -206,6 +206,7 @@ static int decode_packet(struct dec_audio *da, struct demux_packet *mpkt,
@@ -46,7 +81,7 @@ index c4d3a2a..59cbc8a 100644
      struct mp_audio *mpframe = mp_audio_from_avframe(priv->avframe);
      if (!mpframe)
 diff --git a/audio/decode/ad_spdif.c b/audio/decode/ad_spdif.c
-index 30c7883..7af61ed 100644
+index 30c7883bf..7af61ed84 100644
 --- a/audio/decode/ad_spdif.c
 +++ b/audio/decode/ad_spdif.c
 @@ -115,10 +115,16 @@ static int determine_codec_profile(struct dec_audio *da, AVPacket *pkt)
@@ -79,7 +114,7 @@ index 30c7883..7af61ed 100644
      AVDictionary *format_opts = NULL;
  
 diff --git a/audio/filter/af_lavcac3enc.c b/audio/filter/af_lavcac3enc.c
-index 9df5adb..0a7c5d4 100644
+index 9df5adb96..0a7c5d444 100644
 --- a/audio/filter/af_lavcac3enc.c
 +++ b/audio/filter/af_lavcac3enc.c
 @@ -280,6 +280,7 @@ static int filter_out(struct af_instance *af)
@@ -113,7 +148,7 @@ index 9df5adb..0a7c5d4 100644
      MP_DBG(af, "avcodec_encode_audio got %d, pending %d.\n",
             pkt.size, s->pending->samples + s->input->samples);
 diff --git a/audio/filter/af_lavrresample.c b/audio/filter/af_lavrresample.c
-index 828be66..dc5d1a0 100644
+index 828be6624..dc5d1a0d2 100644
 --- a/audio/filter/af_lavrresample.c
 +++ b/audio/filter/af_lavrresample.c
 @@ -111,7 +111,12 @@ static double get_delay(struct af_resample *s)
@@ -130,7 +165,7 @@ index 828be66..dc5d1a0 100644
  #endif
  
 diff --git a/audio/out/ao_lavc.c b/audio/out/ao_lavc.c
-index 4dbc55a..8ae1317 100644
+index 4dbc55a36..8ae131740 100644
 --- a/audio/out/ao_lavc.c
 +++ b/audio/out/ao_lavc.c
 @@ -258,6 +258,7 @@ static void encode_audio_and_write(struct ao *ao, AVFrame *frame)
@@ -171,7 +206,7 @@ index 4dbc55a..8ae1317 100644
  
  // must get exactly ac->aframesize amount of data
 diff --git a/common/av_common.c b/common/av_common.c
-index f2f4349..27a3319 100644
+index f2f43498e..27a331927 100644
 --- a/common/av_common.c
 +++ b/common/av_common.c
 @@ -77,8 +77,13 @@ void mp_copy_lav_codec_headers(AVCodecContext *avctx, AVCodecContext *st)
@@ -189,7 +224,7 @@ index f2f4349..27a3319 100644
  
  // Pick a "good" timebase, which will be used to convert double timestamps
 diff --git a/common/av_common.h b/common/av_common.h
-index 4b13dcd..b5ca034 100644
+index 4b13dcdd0..b5ca034de 100644
 --- a/common/av_common.h
 +++ b/common/av_common.h
 @@ -46,4 +46,13 @@ void mp_set_avdict(struct AVDictionary **dict, char **kv);
@@ -207,7 +242,7 @@ index 4b13dcd..b5ca034 100644
 +
  #endif
 diff --git a/common/av_log.c b/common/av_log.c
-index e2a4c33..64ce26d 100644
+index e2a4c3316..64ce26d85 100644
 --- a/common/av_log.c
 +++ b/common/av_log.c
 @@ -218,7 +218,9 @@ bool print_libav_versions(struct mp_log *log, int v)
@@ -221,7 +256,7 @@ index e2a4c33..64ce26d 100644
      return !mismatch;
  }
 diff --git a/common/encode_lavc.c b/common/encode_lavc.c
-index 7e116e3..d052385 100644
+index 7e116e3b0..d0523857e 100644
 --- a/common/encode_lavc.c
 +++ b/common/encode_lavc.c
 @@ -595,7 +595,12 @@ int encode_lavc_alloc_stream(struct encode_lavc_context *ctx,
@@ -285,7 +320,7 @@ index 7e116e3..d052385 100644
              ctx->vbytes += packet->size;
              ++ctx->frames;
 diff --git a/demux/demux_lavf.c b/demux/demux_lavf.c
-index 1249563..94bcd3f 100644
+index 124956378..94bcd3fff 100644
 --- a/demux/demux_lavf.c
 +++ b/demux/demux_lavf.c
 @@ -577,8 +577,13 @@ static void handle_new_stream(demuxer_t *demuxer, int i)
@@ -363,7 +398,7 @@ index 1249563..94bcd3f 100644
          if (priv->own_stream)
              free_stream(priv->stream);
 diff --git a/demux/stheader.h b/demux/stheader.h
-index 26c1246..240be72 100644
+index 26c1246d6..240be72a4 100644
 --- a/demux/stheader.h
 +++ b/demux/stheader.h
 @@ -71,6 +71,8 @@ struct mp_codec_params {
@@ -376,7 +411,7 @@ index 26c1246..240be72 100644
  
      // Timestamp granularity for converting double<->rational timestamps.
 diff --git a/player/command.c b/player/command.c
-index 74c7e26..36850a2 100644
+index 74c7e2696..36850a2c5 100644
 --- a/player/command.c
 +++ b/player/command.c
 @@ -3569,7 +3569,11 @@ static int mp_property_configuration(void *ctx, struct m_property *prop,
@@ -392,7 +427,7 @@ index 74c7e26..36850a2 100644
  
  static int mp_property_alias(void *ctx, struct m_property *prop,
 diff --git a/sub/lavc_conv.c b/sub/lavc_conv.c
-index 3ff350c..3e0165a 100644
+index 3ff350c59..3e0165a84 100644
 --- a/sub/lavc_conv.c
 +++ b/sub/lavc_conv.c
 @@ -210,6 +210,9 @@ static int parse_webvtt(AVPacket *in, AVPacket *pkt)
@@ -406,7 +441,7 @@ index 3ff350c..3e0165a 100644
  }
  
 diff --git a/sub/sd_lavc.c b/sub/sd_lavc.c
-index 4ce8c55..2c1b327 100644
+index 4ce8c5588..2c1b327b3 100644
 --- a/sub/sd_lavc.c
 +++ b/sub/sd_lavc.c
 @@ -263,8 +263,13 @@ static void read_sub_bitmaps(struct sd *sd, struct sub *sub)
@@ -424,7 +459,7 @@ index 4ce8c55..2c1b327 100644
          b->h = r->h;
          b->x = r->x;
 diff --git a/video/csputils.c b/video/csputils.c
-index 6835aee..8f6a9e3 100644
+index 6835aeed2..8f6a9e351 100644
 --- a/video/csputils.c
 +++ b/video/csputils.c
 @@ -190,8 +190,10 @@ enum mp_csp_trc avcol_trc_to_mp_csp_trc(int avtrc)
@@ -450,7 +485,7 @@ index 6835aee..8f6a9e3 100644
      }
  }
 diff --git a/video/decode/vd_lavc.c b/video/decode/vd_lavc.c
-index cc3bbc8..ef5b30c 100644
+index cc3bbc86c..ef5b30c57 100644
 --- a/video/decode/vd_lavc.c
 +++ b/video/decode/vd_lavc.c
 @@ -662,9 +662,11 @@ static enum AVPixelFormat get_format_hwdec(struct AVCodecContext *avctx,
@@ -494,7 +529,7 @@ index cc3bbc8..ef5b30c 100644
  
  #if LIBAVCODEC_VERSION_MICRO >= 100
 diff --git a/video/fmt-conversion.c b/video/fmt-conversion.c
-index 7a9e208..8b991c5 100644
+index 7a9e2088f..8b991c5d1 100644
 --- a/video/fmt-conversion.c
 +++ b/video/fmt-conversion.c
 @@ -73,8 +73,10 @@ static const struct {
@@ -535,7 +570,7 @@ index 7a9e208..8b991c5 100644
      {IMGFMT_P016, AV_PIX_FMT_P016},
  #endif
 diff --git a/video/image_writer.c b/video/image_writer.c
-index 59d986f..8a5980c 100644
+index 59d986f3f..8a5980c98 100644
 --- a/video/image_writer.c
 +++ b/video/image_writer.c
 @@ -133,6 +133,7 @@ static bool write_lavc(struct image_writer_ctx *ctx, mp_image_t *image, FILE *fp
@@ -559,7 +594,7 @@ index 59d986f..8a5980c 100644
      fwrite(pkt.data, pkt.size, 1, fp);
  
 diff --git a/video/img_format.c b/video/img_format.c
-index 0232f53..24545a8 100644
+index 0232f5389..24545a850 100644
 --- a/video/img_format.c
 +++ b/video/img_format.c
 @@ -161,14 +161,21 @@ struct mp_imgfmt_desc mp_imgfmt_get_desc(int mpfmt)
@@ -590,7 +625,7 @@ index 0232f53..24545a8 100644
          if (c == 0)
              shift = d.shift;
 diff --git a/video/mp_image.c b/video/mp_image.c
-index 2c4627c..5733907 100644
+index 2c4627c33..573390753 100644
 --- a/video/mp_image.c
 +++ b/video/mp_image.c
 @@ -745,7 +745,9 @@ struct mp_image *mp_image_from_av_frame(struct AVFrame *av_frame)
@@ -614,7 +649,7 @@ index 2c4627c..5733907 100644
      talloc_free(new_ref);
      return frame;
 diff --git a/video/out/vo_lavc.c b/video/out/vo_lavc.c
-index 5c7406d..1721136 100644
+index 5c7406d4b..1721136f8 100644
 --- a/video/out/vo_lavc.c
 +++ b/video/out/vo_lavc.c
 @@ -241,6 +241,7 @@ static void encode_video_and_write(struct vo *vo, AVFrame *frame)
@@ -651,10 +686,74 @@ index 5c7406d..1721136 100644
  
  static void draw_image_unlocked(struct vo *vo, mp_image_t *mpi)
 diff --git a/wscript b/wscript
-index 94db7e2..b5ca5e2 100644
+index 94db7e296..2175088d4 100644
 --- a/wscript
 +++ b/wscript
-@@ -463,13 +463,80 @@ FFmpeg/Libav libraries. You need at least {0}. Aborting.".format(libav_versions_
+@@ -388,28 +388,13 @@ iconv support use --disable-iconv.",
+     }
+ ]
+ 
+-# Libav 12:
+-#   libavutil       55.20.0
+-#   libavcodec      57.25.0
+-#   libavformat     57.7.2
+-#   libswscale      4.0.0
+-#   libavfilter     6.7.0
+-#   libavresample   3.0.0
+-# FFmpeg 3.2.2:
+-#   libavutil       55.34.100
+-#   libavcodec      57.64.101
+-#   libavformat     57.56.100
+-#   libswscale      4.2.100
+-#   libavfilter     6.65.100
+-#   libswresample   2.3.100
+-
+ libav_pkg_config_checks = [
+-    'libavutil',   '>= 55.20.0',
+-    'libavcodec',  '>= 57.25.0',
+-    'libavformat', '>= 57.07.0',
+-    'libswscale',  '>= 4.0.0'
++    'libavutil',   '>= 54.02.0',
++    'libavcodec',  '>= 56.1.0',
++    'libavformat', '>= 56.01.0',
++    'libswscale',  '>= 2.1.3'
+ ]
+-libav_versions_string = "FFmpeg 3.2.2 or Libav 12"
++libav_versions_string = "FFmpeg 2.4 or Libav 11"
+ 
+ libav_dependencies = [
+     {
+@@ -422,11 +407,11 @@ FFmpeg/Libav libraries. You need at least {0}. Aborting.".format(libav_versions_
+     }, {
+         'name': '--libswresample',
+         'desc': 'libswresample',
+-        'func': check_pkg_config('libswresample', '>= 2.3.100'),
++        'func': check_pkg_config('libswresample', '>= 1.1.100'),
+     }, {
+         'name': '--libavresample',
+         'desc': 'libavresample',
+-        'func': check_pkg_config('libavresample',  '>= 3.0.0'),
++        'func': check_pkg_config('libavresample',  '>= 2.1.0'),
+         'deps_neg': ['libswresample'],
+     }, {
+         'name': 'resampler',
+@@ -438,13 +423,13 @@ FFmpeg/Libav libraries. You need at least {0}. Aborting.".format(libav_versions_
+     }, {
+         'name': 'libavfilter',
+         'desc': 'libavfilter',
+-        'func': check_pkg_config('libavfilter', '>= 6.7.0'),
++        'func': check_pkg_config('libavfilter', '>= 5.0.0'),
+         'req':  True,
+         'fmsg': 'libavfilter is a required dependency.',
+     }, {
+         'name': '--libavdevice',
+         'desc': 'libavdevice',
+-        'func': check_pkg_config('libavdevice', '>= 57.0.0'),
++        'func': check_pkg_config('libavdevice', '>= 55.0.0'),
+     }, {
+         'name': 'avcodec-chroma-pos-api',
+         'desc': 'libavcodec avcodec_enum_to_chroma_pos API',
+@@ -463,13 +448,80 @@ FFmpeg/Libav libraries. You need at least {0}. Aborting.".format(libav_versions_
          'func': check_statement('libavutil/frame.h',
                                  'enum AVFrameSideDataType type = AV_FRAME_DATA_SKIP_SAMPLES',
                                  use='libav')

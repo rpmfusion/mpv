@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.23.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -159,6 +159,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Mar 20 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 0.23.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Tue Jan 10 2017 Miro Hrončok <mhroncok@redhat.com> - 0.23.0-2
 - Fix AVAudioResampleContext: Unable to set resampling compensation (rfbz#4408)
 

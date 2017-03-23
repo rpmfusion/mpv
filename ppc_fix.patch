@@ -1,0 +1,20 @@
+--- a/audio/out/ao_sdl.c
++++ b/audio/out/ao_sdl.c
+@@ -28,7 +28,6 @@
+ #include "options/m_option.h"
+ #include "osdep/timer.h"
+ 
+-#include <SDL.h>
+ 
+ struct priv
+ {
+@@ -36,6 +35,8 @@
+ 
+     float buflen;
+ };
++
++#include <SDL.h>
+ 
+ static const int fmtmap[][2] = {
+     {AF_FORMAT_U8,      AUDIO_U8},
+

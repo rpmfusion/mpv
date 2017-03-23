@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.23.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -16,6 +16,12 @@ Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 # Reverse of https://github.com/mpv-player/mpv/commit/3eceac2eab0b42ee082a0b615ebf40a21f0fb915
 #        and https://github.com/mpv-player/mpv/commit/a660e15c9b96bd46209e78b3c3d4cf136a039a50
 Patch2:         %{name}-old-ffmpeg.patch
+%endif
+
+# Fix ppc as upstream refuse to fix the issue
+# https://github.com/mpv-player/mpv/issues/3776
+%ifarch ppc64 ppc64le
+Patch3:         ppc_fix.patch
 %endif
 
 BuildRequires:  pkgconfig(alsa)
@@ -159,6 +165,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Mar 23 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.23.0-4
+- Try to fix ppc build
+
 * Mon Mar 20 2017 RPM Fusion Release Engineering <kwizart@rpmfusion.org> - 0.23.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 

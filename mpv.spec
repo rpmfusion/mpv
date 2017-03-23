@@ -20,9 +20,7 @@ Patch2:         %{name}-old-ffmpeg.patch
 
 # Fix ppc as upstream refuse to fix the issue
 # https://github.com/mpv-player/mpv/issues/3776
-%ifarch ppc64 ppc64le
 Patch3:         ppc_fix.patch
-%endif
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils

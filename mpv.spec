@@ -12,12 +12,6 @@ Patch0:         %{name}-config.patch
 # https://github.com/negativo17/mpv/blob/master/mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 
-%if 0%{?fedora} < 26
-# Reverse of https://github.com/mpv-player/mpv/commit/3eceac2eab0b42ee082a0b615ebf40a21f0fb915
-#        and https://github.com/mpv-player/mpv/commit/a660e15c9b96bd46209e78b3c3d4cf136a039a50
-Patch2:         %{name}-old-ffmpeg.patch
-%endif
-
 # Fix ppc as upstream refuse to fix the issue
 # https://github.com/mpv-player/mpv/issues/3776
 Patch3:         ppc_fix.patch
@@ -28,7 +22,7 @@ BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  ffmpeg-devel
+BuildRequires:  ffmpeg-devel >= 3.2.2
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(jack)

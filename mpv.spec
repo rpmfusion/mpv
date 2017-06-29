@@ -58,7 +58,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
-BuildRequires:  python-docutils
+BuildRequires:  python2-docutils
 
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.26.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -108,10 +108,14 @@ waf configure \
     --disable-build-date \
     --enable-libmpv-shared \
     --enable-sdl2 \
+    --enable-libsmbclient \
     --enable-encoding \
     --enable-dvdread \
     --enable-dvdnav \
-    --enable-cdda
+    --enable-cdda \
+    --enable-tv \
+    --enable-dvbin
+    
 
 waf -v build %{?_smp_mflags}
 
@@ -160,6 +164,10 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Fri Aug 11 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.26.0-3
+- Enable Samba support  (rfbz#4624)
+- Enable TV and DVB support
+
 * Wed Aug 09 2017 Miro Hrončok <mhroncok@redhat.com> - 0.26.0-2
 - Enable DVD and CDDA support  (rfbz#4622)
 

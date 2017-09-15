@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.26.0
-Release:        3%{?dist}
+Version:        0.27.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -108,6 +108,7 @@ waf configure \
     --disable-build-date \
     --enable-libmpv-shared \
     --enable-sdl2 \
+    --enable-libarchive \
     --enable-libsmbclient \
     --enable-encoding \
     --enable-dvdread \
@@ -126,11 +127,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
 
 %post
-/usr/bin/update-desktop-database &> /dev/null || :
 /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
 
 %postun
-/usr/bin/update-desktop-database &> /dev/null || :
 if [ $1 -eq 0 ] ; then
     /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
     /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
@@ -164,6 +163,10 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Fri Sep 15 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.27.0-1
+- Update to 0.27.0
+- Enable libarchive support (play .zip, .iso and other formats)
+
 * Fri Aug 11 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.26.0-3
 - Enable Samba support  (rfbz#4624)
 - Enable TV and DVB support

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.27.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -163,6 +163,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Oct 16 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.27.0-2
+- Rebuild for ffmpeg update
+
 * Fri Sep 15 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.27.0-1
 - Update to 0.27.0
 - Enable libarchive support (play .zip, .iso and other formats)

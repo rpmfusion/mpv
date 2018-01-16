@@ -1,6 +1,9 @@
+# minor ffmpeg update apply with fuzz
+%define _default_patch_fuzz 2
+
 Name:           mpv
-Version:        0.27.0
-Release:        3%{?dist}
+Version:        0.28.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -163,6 +166,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Jan 16 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.28.0-1
+- Update to 0.28.0
+
 * Mon Jan 15 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.27.0-3
 - Rebuilt for VA-API 1.0.0
 

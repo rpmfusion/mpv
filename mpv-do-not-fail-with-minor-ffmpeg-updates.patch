@@ -1,9 +1,9 @@
-diff -Naur mpv-0.22.0.old/player/main.c mpv-0.22.0/player/main.c
---- mpv-0.22.0.old/player/main.c	2016-11-29 15:03:06.751829770 +0100
-+++ mpv-0.22.0/player/main.c	2016-11-29 15:04:40.258166553 +0100
-@@ -429,18 +429,6 @@
- 
-     handle_deprecated_options(mpctx);
+diff -Naur mpv-0.28.0.old/player/main.c mpv-0.28.0/player/main.c
+--- mpv-0.28.0.old/player/main.c
++++ mpv-0.28.0/player/main.c
+@@ -428,18 +428,6 @@
+     if (handle_help_options(mpctx))
+         return -2;
  
 -    if (!print_libav_versions(mp_null_log, 0)) {
 -        // Using mismatched libraries can be legitimate, but even then it's
@@ -20,3 +20,4 @@ diff -Naur mpv-0.22.0.old/player/main.c mpv-0.22.0/player/main.c
      if (!mpctx->playlist->first && !opts->player_idle_mode)
          return -3;
  
+

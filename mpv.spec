@@ -146,7 +146,7 @@ fi
 %files
 %docdir %{_docdir}/%{name}
 %{_docdir}/%{name}
-%license LICENSE Copyright
+%license LICENSE.GPL LICENSE.LGPL Copyright
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
@@ -155,7 +155,7 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
 %files libs
-%license LICENSE Copyright
+%license LICENSE.GPL LICENSE.LGPL Copyright
 %{_libdir}/libmpv.so.*
 
 %files libs-devel
@@ -167,6 +167,7 @@ fi
 * Wed Jan 17 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.0-1
 - Update to 0.28.0
 - Enable VA-API
+- Enable vulkan support
 
 * Tue Jan 16 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.27.0-4
 - Disable VA-API until 0.28.0 lands

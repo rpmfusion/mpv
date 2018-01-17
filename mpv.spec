@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.27.0
-Release:        4%{?dist}
+Version:        0.28.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -38,13 +38,14 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
-#BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(rubberband)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
+BuildRequires:  pkgconfig(vulkan)
 BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
@@ -163,6 +164,10 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Wed Jan 17 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.0-1
+- Update to 0.28.0
+- Enable VA-API
+
 * Tue Jan 16 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.27.0-4
 - Disable VA-API until 0.28.0 lands
 

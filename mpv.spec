@@ -2,7 +2,7 @@ Name:           mpv
 Version:        0.28.0
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
-License:        GPLv2+
+License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
 Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
@@ -22,7 +22,7 @@ BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  ffmpeg-devel >= 3.2.2
+BuildRequires:  ffmpeg-devel >= 3.5
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(jack)

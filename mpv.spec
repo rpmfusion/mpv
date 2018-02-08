@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.28.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -50,6 +50,7 @@ BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
+BuildRequires:  pkgconfig(wayland-protocols)
 BuildRequires:  pkgconfig(wayland-scanner)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
@@ -127,9 +128,7 @@ waf install --destdir=%{buildroot}
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets libs
 
 %files
 %docdir %{_docdir}/%{name}
@@ -152,6 +151,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Feb 08 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.0-3
+- Fix missing build requires
+
 * Sat Jan 27 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.0-2
 - Rebuild for libcdio
 

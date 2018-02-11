@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.28.0
-Release:        3%{?dist}
+Version:        0.28.1
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -151,6 +151,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Feb 11 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.1-1
+- Update to 0.28.1
+
 * Thu Feb 08 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.0-3
 - Fix missing build requires
 

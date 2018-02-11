@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.27.0
+Version:        0.27.1
 Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
@@ -126,21 +126,7 @@ waf install --destdir=%{buildroot}
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
 
-%post
-/bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
-
-%postun
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-fi
-
-%posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets libs
 
 %files
 %docdir %{_docdir}/%{name}
@@ -163,6 +149,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Feb 11 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.27.1-1
+- Update to 0.27.1
+
 * Fri Sep 15 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.27.0-1
 - Update to 0.27.0
 - Enable libarchive support (play .zip, .iso and other formats)

@@ -128,8 +128,6 @@ waf install --destdir=%{buildroot}
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
 
-%ldconfig_scriptlets libs
-
 %files
 %docdir %{_docdir}/%{name}
 %{_docdir}/%{name}

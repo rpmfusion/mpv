@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.23.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -39,19 +39,21 @@ BuildRequires:  pkgconfig(libguess)
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
-BuildRequires:  pkgconfig(libquvi-0.9)
+BuildRequires:  pkgconfig(libquvi)
 BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(lua-5.1)
+BuildRequires:  pkgconfig(lua)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(rubberband)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
 BuildRequires:  waf
+%{?_with_wayland:
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
 BuildRequires:  pkgconfig(wayland-scanner)
+}
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xinerama)
@@ -159,6 +161,9 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Feb 22 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.23.0-3
+- Build for el7
+
 * Tue Jan 10 2017 Miro Hrončok <mhroncok@redhat.com> - 0.23.0-2
 - Fix AVAudioResampleContext: Unable to set resampling compensation (rfbz#4408)
 

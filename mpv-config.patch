@@ -1,29 +1,12 @@
-diff --git a/etc/example.conf b/etc/example.conf
-index 7084ab4..abcb4b8 100644
---- a/etc/example.conf
-+++ b/etc/example.conf
-@@ -1,7 +1,7 @@
+--- a/etc/mpv.conf
++++ b/etc/mpv.conf
+@@ -8,7 +8,7 @@
+ # no builtin or example mpv.conf with all the defaults.
  #
- # mpv configuration file
  #
 -# Configuration files are read system-wide from /usr/local/etc/mpv.conf
 +# Configuration files are read system-wide from /etc/mpv/mpv.conf
- # and per-user from ~/.mpv/config, where per-user settings override
+ # and per-user from ~/.config/mpv/mpv.conf, where per-user settings override
  # system-wide settings, all of which are overridden by the command line.
  #
-@@ -28,6 +28,7 @@
- 
- # Specify default video driver (see --vo=help for a list).
- #vo=vdpau
-+vo=opengl
- 
- # Start in fullscreen mode by default.
- #fs=yes
-@@ -51,6 +52,7 @@
- 
- # Specify default audio driver (see --ao=help for a list).
- #ao=alsa
-+ao=pulse,alsa,
- 
- # Disable softvol usage, and always use the system mixer if available.
- #softvol=no
+

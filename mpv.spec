@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.28.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -21,7 +21,6 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
-BuildRequires:  pkgconfig(enca)
 BuildRequires:  ffmpeg-devel >= 3.5
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
@@ -33,11 +32,9 @@ BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libcdio)
 BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
-BuildRequires:  pkgconfig(libguess)
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
-BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  pkgconfig(sdl2)
@@ -60,7 +57,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
-BuildRequires:  python2-docutils
+BuildRequires:  python3-docutils
 
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
@@ -149,6 +146,10 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Feb 24 2018 Martin Herkt <lachs0r@srsfckn.biz> - 0.28.2-2
+- Remove unused build requires
+- Switch to python3-docutils
+
 * Sat Feb 17 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-1
 - Update to 0.28.2
 

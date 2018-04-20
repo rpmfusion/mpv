@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.28.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -149,6 +149,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Fri Apr 20 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-4
+- Rebuild for ffmpeg-4.0 release
+
 * Thu Mar 08 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 0.28.2-3
 - Rebuilt for new ffmpeg snapshot
 

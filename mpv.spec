@@ -45,7 +45,9 @@ BuildRequires:  pkgconfig(rubberband)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
+%ifarch x86_64 i686
 BuildRequires:  pkgconfig(vulkan)
+%endif
 BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
@@ -151,6 +153,7 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %changelog
 * Sat Jun 16 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-5
 - Rebuild for new libass version
+- vulkan is x86 only
 
 * Fri Apr 20 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-4
 - Rebuild for ffmpeg-4.0 release

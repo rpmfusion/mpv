@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.28.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -45,9 +45,7 @@ BuildRequires:  pkgconfig(rubberband)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
-%ifarch x86_64 i686
 BuildRequires:  pkgconfig(vulkan)
-%endif
 BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
@@ -151,6 +149,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Wed Jun 27 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-6
+- Revert last commit
+
 * Sat Jun 16 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-5
 - Rebuild for new libass version
 - vulkan is x86 only

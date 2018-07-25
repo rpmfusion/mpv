@@ -61,8 +61,11 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
+%if 0%{?fedora} >= 28
 BuildRequires:  python3-docutils
-
+%else
+BuildRequires:  python2-docutils
+%endif
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)

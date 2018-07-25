@@ -61,7 +61,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
-%if 0%{?fedora} >= 28
+%if 0%{?fedora} >= 29
 BuildRequires:  python3-docutils
 %else
 BuildRequires:  python2-docutils

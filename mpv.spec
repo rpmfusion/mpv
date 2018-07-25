@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.28.2
-Release:        6%{?dist}
+Version:        0.29.0
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -23,6 +23,7 @@ BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
 BuildRequires:  ffmpeg-devel >= 3.5
+BuildRequires:  nv-codec-headers
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(jack)
@@ -60,7 +61,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
-BuildRequires:  python2-docutils
+BuildRequires:  python3-docutils
 
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
@@ -112,7 +113,6 @@ waf configure \
     --enable-sdl2 \
     --enable-libarchive \
     --enable-libsmbclient \
-    --enable-encoding \
     --enable-dvdread \
     --enable-dvdnav \
     --enable-cdda \
@@ -149,6 +149,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Wed Jul 25 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.0-1
+- Update to 0.29.0
+
 * Wed Jun 27 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.28.2-6
 - Revert last commit
 

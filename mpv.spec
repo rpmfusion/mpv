@@ -9,12 +9,9 @@ Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.ta
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
 
-# https://github.com/negativo17/mpv/blob/master/mpv-do-not-fail-with-minor-ffmpeg-updates.patch
-Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
-
 # Fix ppc as upstream refuse to fix the issue
 # https://github.com/mpv-player/mpv/issues/3776
-Patch3:         ppc_fix.patch
+Patch1:         ppc_fix.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -22,8 +19,13 @@ BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  ffmpeg-devel >= 3.5
-BuildRequires:  nv-codec-headers
+BuildRequires:  pkgconfig(libavutil) >= 56.12.100
+BuildRequires:  pkgconfig(libavcodec) >= 58.16.100
+BuildRequires:  pkgconfig(libavformat) >= 58.9.100
+BuildRequires:  pkgconfig(libswscale) >= 5.0.101
+BuildRequires:  pkgconfig(libavfilter) >= 7.14.100
+BuildRequires:  pkgconfig(libswresample) >= 3.0.100
+BuildRequires:  pkgconfig(ffnvcodec)
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(jack)
@@ -35,7 +37,7 @@ BuildRequires:  pkgconfig(libcdio)
 BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libguess)
-BuildRequires:  libjpeg-turbo-devel
+BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
@@ -61,11 +63,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
-%if 0%{?fedora} >= 29
-BuildRequires:  python3-docutils
-%else
-BuildRequires:  python2-docutils
-%endif
+BuildRequires:  /usr/bin/rst2man
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)
@@ -90,7 +88,7 @@ This package contains the dynamic library libmpv, which provides access to Mpv.
 
 %package libs-devel
 Summary: Development package for libmpv
-Requires: mpv-libs%{_isa} = %{version}-%{release}
+Requires: mpv-libs%{?_isa} = %{version}-%{release}
 Provides: libmpv-devel = %{version}-%{release}
 Obsoletes: libmpv-devel < %{version}-%{release}
 

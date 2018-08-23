@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -15,6 +15,7 @@ Patch1:         ppc_fix.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
+BuildRequires:  gcc
 BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
@@ -150,6 +151,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Aug 23 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.0-2
+- Add BuildRequires: gcc
+
 * Wed Jul 25 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.0-1
 - Update to 0.29.0
 

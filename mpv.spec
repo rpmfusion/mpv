@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -46,6 +46,7 @@ BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(rubberband)
+BuildRequires:  libshaderc-devel
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
@@ -151,6 +152,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Oct 02 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.0-3
+- Add BuildRequires: libshaderc-devel
+
 * Thu Aug 23 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.0-2
 - Add BuildRequires: gcc
 

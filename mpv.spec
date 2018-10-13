@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.29.0
-Release:        3%{?dist}
+Version:        0.29.1
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -82,8 +82,6 @@ output methods are supported.
 
 %package libs
 Summary: Dynamic library for Mpv frontends 
-Provides: libmpv = %{version}-%{release}
-Obsoletes: libmpv < %{version}-%{release}
 
 %description libs
 This package contains the dynamic library libmpv, which provides access to Mpv.
@@ -91,8 +89,6 @@ This package contains the dynamic library libmpv, which provides access to Mpv.
 %package libs-devel
 Summary: Development package for libmpv
 Requires: mpv-libs%{?_isa} = %{version}-%{release}
-Provides: libmpv-devel = %{version}-%{release}
-Obsoletes: libmpv-devel < %{version}-%{release}
 
 %description libs-devel
 Libmpv development header files and libraries.
@@ -102,8 +98,8 @@ Libmpv development header files and libraries.
 
 
 %build
-CFLAGS="${RPM_OPT_FLAGS}" \
-LDFLAGS="${RPM_LD_FLAGS}" \
+CFLAGS="%{optflags}" \
+LDFLAGS="%{?__global_ldflags}" \
 waf configure \
     --prefix=%{_prefix} \
     --bindir=%{_bindir} \
@@ -129,17 +125,17 @@ waf -v build %{?_smp_mflags}
 waf install --destdir=%{buildroot}
 
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
-install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}
+install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}/
 
 %files
-%docdir %{_docdir}/%{name}
-%{_docdir}/%{name}
+%docdir %{_docdir}/%{name}/
+%{_docdir}/%{name}/
 %license LICENSE.GPL LICENSE.LGPL Copyright
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
 %{_mandir}/man1/%{name}.*
-%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
 %files libs
@@ -147,11 +143,16 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/libmpv.so.*
 
 %files libs-devel
-%{_includedir}/%{name}
+%{_includedir}/%{name}/
 %{_libdir}/libmpv.so
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Oct 13 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-1
+- Update to 0.29.1
+- Drop old Obsoletes and Provides
+- Use modern marcos
+
 * Tue Oct 02 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.0-3
 - Add BuildRequires: libshaderc-devel
 

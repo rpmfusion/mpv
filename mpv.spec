@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.23.0
-Release:        3%{?dist}
+Version:        0.27.2
+Release:        1%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+
 URL:            http://%{name}.io/
@@ -12,11 +12,9 @@ Patch0:         %{name}-config.patch
 # https://github.com/negativo17/mpv/blob/master/mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 Patch1:         mpv-do-not-fail-with-minor-ffmpeg-updates.patch
 
-%if 0%{?fedora} < 26
-# Reverse of https://github.com/mpv-player/mpv/commit/3eceac2eab0b42ee082a0b615ebf40a21f0fb915
-#        and https://github.com/mpv-player/mpv/commit/a660e15c9b96bd46209e78b3c3d4cf136a039a50
-Patch2:         %{name}-old-ffmpeg.patch
-%endif
+# Fix ppc as upstream refuse to fix the issue
+# https://github.com/mpv-player/mpv/issues/3776
+Patch3:         ppc_fix.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -24,7 +22,7 @@ BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  ffmpeg-devel
+BuildRequires:  ffmpeg-devel >= 3.2.2
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(jack)
@@ -39,21 +37,19 @@ BuildRequires:  pkgconfig(libguess)
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
-BuildRequires:  pkgconfig(libquvi)
+BuildRequires:  libquvi-devel
 BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(lua)
+BuildRequires:  lua-devel
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(rubberband)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
 BuildRequires:  waf
-%{?_with_wayland:
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
 BuildRequires:  pkgconfig(wayland-scanner)
-}
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xinerama)
@@ -62,7 +58,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zlib)
-BuildRequires:  python-docutils
+BuildRequires:  python2-docutils
 
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
@@ -112,7 +108,15 @@ waf configure \
     --disable-build-date \
     --enable-libmpv-shared \
     --enable-sdl2 \
-    --enable-encoding
+    --enable-libarchive \
+    --enable-libsmbclient \
+    --enable-encoding \
+    --enable-dvdread \
+    --enable-dvdnav \
+    --enable-cdda \
+    --enable-tv \
+    --enable-dvbin
+    
 
 waf -v build %{?_smp_mflags}
 
@@ -161,6 +165,41 @@ fi
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Feb 17 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.27.2-1
+- Update to 0.27.2
+
+* Sun Feb 11 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.27.1-1
+- Update to 0.27.1
+
+* Fri Sep 15 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.27.0-1
+- Update to 0.27.0
+- Enable libarchive support (play .zip, .iso and other formats)
+
+* Fri Aug 11 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.26.0-3
+- Enable Samba support  (rfbz#4624)
+- Enable TV and DVB support
+
+* Wed Aug 09 2017 Miro Hrončok <mhroncok@redhat.com> - 0.26.0-2
+- Enable DVD and CDDA support  (rfbz#4622)
+
+* Thu Jul 20 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.26.0-1
+- Update to 0.26.0
+
+* Wed May 17 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.25.0-2
+- Rebuild for ffmpeg update
+
+* Mon May 08 2017 Miro Hrončok <mhroncok@redhat.com> - 0.25.0-1
+- Update to 0.25.0
+
+* Sat Apr 29 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.24.0-2
+- Rebuild for ffmpeg update
+
+* Sun Apr 02 2017 Miro Hrončok <mhroncok@redhat.com> - 0.24.0-1
+- Update to 0.24.0
+
+* Thu Mar 23 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.23.0-4
+- Try to fix ppc build
+
 * Thu Feb 22 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.23.0-3
 - Build for el7
 

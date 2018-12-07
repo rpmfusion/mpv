@@ -200,7 +200,7 @@ fi
 * Thu Mar 23 2017 Leigh Scott <leigh123linux@googlemail.com> - 0.23.0-4
 - Try to fix ppc build
 
-* Thu Feb 22 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.23.0-3
+* Mon Mar 20 2017 Nicolas Chauvet <kwizart@gmail.com> - 0.23.0-3
 - Build for el7
 
 * Tue Jan 10 2017 Miro Hrončok <mhroncok@redhat.com> - 0.23.0-2

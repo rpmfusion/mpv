@@ -70,6 +70,12 @@ BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)
 
+%ifarch armv7hl armv7hnl
+%{?_with_rpi:
+BuildRequires:  raspberrypi-vc-devel
+}
+%endif
+
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
 
@@ -115,6 +121,7 @@ waf configure \
     --enable-dvdread \
     --enable-dvdnav \
     --enable-cdda \
+%{?_with_rpi:--enable-rpi} \
     --enable-tv \
     --enable-dvbin
     

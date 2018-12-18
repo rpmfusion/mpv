@@ -121,7 +121,7 @@ waf configure \
     --enable-dvdread \
     --enable-dvdnav \
     --enable-cdda \
-%{?_with_rpi:--enable-rpi} \
+%{?_with_rpi:--enable-rpi --disable-vaapi} \
     --enable-tv \
     --enable-dvbin
     

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -155,6 +155,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Dec 18 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.29.1-3
+- Enable rpi support
+
 * Tue Nov 06 2018 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-2
 - Rebuild for new ffmpeg
 

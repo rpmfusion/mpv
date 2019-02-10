@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -30,6 +30,7 @@ BuildRequires:  pkgconfig(ffnvcodec)
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(mujs)
 BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libarchive)
 BuildRequires:  pkgconfig(libass)
@@ -155,6 +156,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Jan 29 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-4
+- Enable JavaScript support (rfbz#5151)
+
 * Tue Dec 18 2018 Nicolas Chauvet <kwizart@gmail.com> - 0.29.1-3
 - Enable rpi support
 

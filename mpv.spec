@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -156,6 +156,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.29.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Tue Jan 29 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-4
 - Enable JavaScript support (rfbz#5151)
 

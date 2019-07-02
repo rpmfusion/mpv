@@ -1,10 +1,15 @@
+%global commit c9e7473d67893d9248bedf63530a1e0325a3036a
+%global gitdate 20190616
+%global shortcommit %(c=%{commit}; echo ${c:0:7})
+%global gitrelease .%{gitdate}.git%{shortcommit}
+
 Name:           mpv
 Version:        0.29.1
-Release:        6%{?dist}
+Release:        6%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
-URL:            http://%{name}.io/
-Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+URL:            http://mpv.io/
+Source0:        https://github.com/mpv-player/mpv/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -101,7 +106,7 @@ Requires: mpv-libs%{?_isa} = %{version}-%{release}
 Libmpv development header files and libraries.
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n mpv-%{?commit}%{?!commit:%{version}}
 
 
 %build

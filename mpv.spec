@@ -5,7 +5,7 @@
 
 Name:           mpv
 Version:        0.29.1
-Release:        7%{?gitrelease}%{?dist}
+Release:        8%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -45,6 +45,7 @@ BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libguess)
 BuildRequires:  pkgconfig(libjpeg)
+BuildRequires:  pkgconfig(libplacebo)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
@@ -112,6 +113,8 @@ Libmpv development header files and libraries.
 %prep
 %autosetup -p1 -n mpv-%{?commit}%{?!commit:%{version}}
 
+sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.standard_includes.append('$(pkgconf --variable=includedir libavcodec)')|" wscript
+
 
 %build
 %set_build_flags
@@ -164,8 +167,10 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
-* Tue Jul 02 2019 Nicolas Chauvet <kwizart@gmail.com> - 0.29.1-7.20190616.gitc9e7473
+* Tue Jul 02 2019 Nicolas Chauvet <kwizart@gmail.com> - 0.29.1-8.20190616.gitc9e7473
 - Update to 20190616 snapshot
+- Add libplacebo
+- Fix support for FFmpeg DRM PRIME
 
 * Sun Jun 23 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-6
 - Rebuild against sdk9 nv-codec-headers

@@ -82,6 +82,10 @@ BuildRequires:  raspberrypi-vc-devel
 }
 %endif
 
+# Obsoletes older ci/cd
+Obsoletes:  mpv-master < %{version}-100
+Provides: mpv-master = %{version}-100
+
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
 

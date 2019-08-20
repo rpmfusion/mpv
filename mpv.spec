@@ -1,11 +1,11 @@
-%global commit c9e7473d67893d9248bedf63530a1e0325a3036a
-%global gitdate 20190616
+%global commit cd7bcb9d0c12ee4e252024235cc8bbb395960118
+%global gitdate 20190814
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global gitrelease .%{gitdate}.git%{shortcommit}
 
 Name:           mpv
 Version:        0.29.1
-Release:        9%{?gitrelease}%{?dist}
+Release:        10%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -25,7 +25,7 @@ BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  pkgconfig(libavutil) >= 56.12.100
+BuildRequires:  pkgconfig(libavutil) >= 56.27.100
 BuildRequires:  pkgconfig(libavcodec) >= 58.16.100
 BuildRequires:  pkgconfig(libavformat) >= 58.9.100
 BuildRequires:  pkgconfig(libswscale) >= 5.0.101
@@ -167,6 +167,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Aug 20 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-10.20190814.gitcd7bcb9
+- Update to 20190814 snapshot
+
 * Tue Aug 06 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-9.20190616.gitc9e7473
 - Rebuild for new ffmpeg version
 

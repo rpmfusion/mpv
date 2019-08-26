@@ -1,10 +1,11 @@
 Name:           mpv
 Version:        0.29.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
 Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source1:        waf
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -29,8 +30,8 @@ BuildRequires:  pkgconfig(libswresample) >= 3.0.100
 BuildRequires:  pkgconfig(ffnvcodec)
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
-BuildRequires:  pkgconfig(jack)
-BuildRequires:  pkgconfig(mujs)
+#BuildRequires:  pkgconfig(jack)
+#BuildRequires:  pkgconfig(mujs)
 BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libarchive)
 BuildRequires:  pkgconfig(libass)
@@ -38,21 +39,23 @@ BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libcdio)
 BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
-BuildRequires:  pkgconfig(libguess)
+#BuildRequires:  pkgconfig(libguess)
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(lua-5.1)
+#BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  pkgconfig(rubberband)
-BuildRequires:  libshaderc-devel
+#BuildRequires:  pkgconfig(rubberband)
+#BuildRequires:  libshaderc-devel
 BuildRequires:  pkgconfig(smbclient)
-BuildRequires:  pkgconfig(uchardet) >= 0.0.5
+#BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
+%ifarch x86_64
 BuildRequires:  pkgconfig(vulkan)
-BuildRequires:  waf
+%endif
+#BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
@@ -102,12 +105,12 @@ Libmpv development header files and libraries.
 
 %prep
 %autosetup -p1
-
+cp %{SOURCE1} .
 
 %build
 CFLAGS="%{optflags}" \
 LDFLAGS="%{?__global_ldflags}" \
-waf configure \
+./waf configure \
     --prefix=%{_prefix} \
     --bindir=%{_bindir} \
     --libdir=%{_libdir} \
@@ -127,10 +130,10 @@ waf configure \
     --enable-dvbin
     
 
-waf -v build %{?_smp_mflags}
+./waf -v build %{?_smp_mflags}
 
 %install
-waf install --destdir=%{buildroot}
+./waf install --destdir=%{buildroot}
 
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}/
@@ -156,6 +159,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Aug 26 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-6
+- Bundle waf and comment out the missing BuildRequires
+
 * Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.29.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 

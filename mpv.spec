@@ -55,6 +55,7 @@ BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(lua) >= 5.3.0
+BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)

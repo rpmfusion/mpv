@@ -1,10 +1,15 @@
+%global commit cd7bcb9d0c12ee4e252024235cc8bbb395960118
+%global gitdate 20190814
+%global shortcommit %(c=%{commit}; echo ${c:0:7})
+%global gitrelease .%{gitdate}.git%{shortcommit}
+
 Name:           mpv
 Version:        0.29.1
-Release:        8%{?dist}
+Release:        11%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
-URL:            http://%{name}.io/
-Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+URL:            http://mpv.io/
+Source0:        https://github.com/mpv-player/mpv/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -20,7 +25,7 @@ BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  pkgconfig(libavutil) >= 56.12.100
+BuildRequires:  pkgconfig(libavutil) >= 56.27.100
 BuildRequires:  pkgconfig(libavcodec) >= 58.16.100
 BuildRequires:  pkgconfig(libavformat) >= 58.9.100
 BuildRequires:  pkgconfig(libswscale) >= 5.0.101
@@ -50,6 +55,7 @@ BuildRequires:  pkgconfig(libcdio)
 BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libjpeg)
+BuildRequires:  pkgconfig(libplacebo)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
@@ -83,6 +89,10 @@ BuildRequires:  raspberrypi-vc-devel
 }
 %endif
 
+# Obsoletes older ci/cd
+Obsoletes:  mpv-master < %{version}-100
+Provides: mpv-master = %{version}-100
+
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
 
@@ -107,13 +117,14 @@ Requires: mpv-libs%{?_isa} = %{version}-%{release}
 Libmpv development header files and libraries.
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n mpv-%{?commit}%{?!commit:%{version}}
+
+sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.standard_includes.append('$(pkgconf --variable=includedir libavcodec)')|" wscript
 
 
 %build
-CFLAGS="%{optflags}" \
-LDFLAGS="%{?__global_ldflags}" \
-waf configure \
+%set_build_flags
+%{_bindir}/waf configure \
     --prefix=%{_prefix} \
     --bindir=%{_bindir} \
     --libdir=%{_libdir} \
@@ -133,10 +144,10 @@ waf configure \
     --enable-dvbin
     
 
-waf -v build %{?_smp_mflags}
+%{_bindir}/waf -v build %{?_smp_mflags}
 
 %install
-waf install --destdir=%{buildroot}
+%{_bindir}/waf install --destdir=%{buildroot}
 
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}/
@@ -162,14 +173,23 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
-* Tue Aug 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-8
-- Add pkgconfig(luajit)
+* Tue Aug 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-11.20190814.gitcd7bcb9
+- Rebuild for switch to lua
 
-* Tue Aug 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-7
-- Add changes for el8
+* Tue Aug 20 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-10.20190814.gitcd7bcb9
+- Update to 20190814 snapshot
 
-* Mon Aug 26 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-6
-- Bundle waf and comment out the missing BuildRequires
+* Tue Aug 06 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-9.20190616.gitc9e7473
+- Rebuild for new ffmpeg version
+
+* Tue Jul 02 2019 Nicolas Chauvet <kwizart@gmail.com> - 0.29.1-8.20190616.gitc9e7473
+- Update to 20190616 snapshot
+- Add libplacebo
+- Fix support for FFmpeg DRM PRIME
+
+* Sun Jun 23 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-6
+- Rebuild against sdk9 nv-codec-headers
+- Spec file clean up
 
 * Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.29.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild

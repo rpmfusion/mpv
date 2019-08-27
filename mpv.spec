@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -163,6 +163,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Aug 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-8
+- Add pkgconfig(luajit)
+
 * Tue Aug 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-7
 - Add changes for el8
 

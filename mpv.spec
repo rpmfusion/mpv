@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.29.1
-Release:        5%{?dist}
+Release:        7%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://%{name}.io/
@@ -162,6 +162,12 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Aug 27 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-7
+- Add changes for el8
+
+* Mon Aug 26 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-6
+- Bundle waf and comment out the missing BuildRequires
+
 * Mon Mar 04 2019 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.29.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 

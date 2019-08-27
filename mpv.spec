@@ -29,8 +29,19 @@ BuildRequires:  pkgconfig(libswresample) >= 3.0.100
 BuildRequires:  pkgconfig(ffnvcodec)
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
+%if 0%{?fedora}
+BuildRequires:  libshaderc-devel
 BuildRequires:  pkgconfig(jack)
 BuildRequires:  pkgconfig(mujs)
+BuildRequires:  pkgconfig(uchardet) >= 0.0.5
+BuildRequires:  pkgconfig(rubberband)
+BuildRequires:  pkgconfig(libguess)
+BuildRequires:  pkgconfig(vulkan)
+%else
+%ifarch x86_64 
+BuildRequires:  pkgconfig(vulkan)
+%endif
+%endif
 BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libarchive)
 BuildRequires:  pkgconfig(libass)
@@ -38,20 +49,15 @@ BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libcdio)
 BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
-BuildRequires:  pkgconfig(libguess)
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(lua-5.1)
+BuildRequires:  pkgconfig(lua) >= 5.3.0
 BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  pkgconfig(rubberband)
-BuildRequires:  libshaderc-devel
 BuildRequires:  pkgconfig(smbclient)
-BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(vdpau)
-BuildRequires:  pkgconfig(vulkan)
 BuildRequires:  waf
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)

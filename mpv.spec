@@ -42,6 +42,7 @@ BuildRequires:  pkgconfig(uchardet) >= 0.0.5
 BuildRequires:  pkgconfig(rubberband)
 BuildRequires:  pkgconfig(libguess)
 BuildRequires:  pkgconfig(vulkan)
+BuildRequires:  pkgconfig(libplacebo)
 %else
 %ifarch x86_64 
 BuildRequires:  pkgconfig(vulkan)
@@ -55,7 +56,6 @@ BuildRequires:  pkgconfig(libcdio)
 BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libjpeg)
-BuildRequires:  pkgconfig(libplacebo)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)

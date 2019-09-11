@@ -34,6 +34,11 @@ BuildRequires:  pkgconfig(libswresample) >= 3.0.100
 BuildRequires:  pkgconfig(ffnvcodec)
 BuildRequires:  pkgconfig(gbm)
 BuildRequires:  pkgconfig(gl)
+BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(mujs)
+BuildRequires:  pkgconfig(uchardet) >= 0.0.5
+BuildRequires:  pkgconfig(rubberband)
+BuildRequires:  pkgconfig(libguess)
 %if 0%{?fedora}
 BuildRequires:  libshaderc-devel
 BuildRequires:  pkgconfig(vulkan)

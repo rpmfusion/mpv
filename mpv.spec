@@ -136,7 +136,6 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --enable-sdl2 \
     --enable-libarchive \
     --enable-libsmbclient \
-    --enable-dvdread \
     --enable-dvdnav \
     --enable-cdda \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \

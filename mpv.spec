@@ -5,7 +5,7 @@
 
 Name:           mpv
 Version:        0.29.1
-Release:        13%{?gitrelease}%{?dist}
+Release:        14%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -21,8 +21,8 @@ Patch1:         ppc_fix.patch
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
 BuildRequires:  gcc
+BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dvdnav)
-BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
 BuildRequires:  pkgconfig(libavutil) >= 56.27.100
@@ -57,7 +57,6 @@ BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
-BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(luajit)
@@ -77,6 +76,7 @@ BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(zimg)
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  /usr/bin/rst2man
 BuildRequires:  perl(Math::BigInt)
@@ -171,6 +171,10 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Sep 22 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-14.20190922.gitb6def65
+- Remove BuildRequires dvdread and libv4l2
+- Add BuildRequires zimg and caca
+
 * Sun Sep 22 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-13.20190922.gitb6def65
 - Update to 20190922 snapshot
 - Switch to waf-python3

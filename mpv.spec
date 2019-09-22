@@ -1,11 +1,11 @@
-%global commit cd7bcb9d0c12ee4e252024235cc8bbb395960118
-%global gitdate 20190814
+%global commit b6def652a4b0db0f3514a44fec08f4be66187f3b
+%global gitdate 20190922
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global gitrelease .%{gitdate}.git%{shortcommit}
 
 Name:           mpv
 Version:        0.29.1
-Release:        12%{?gitrelease}%{?dist}
+Release:        13%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -64,7 +64,7 @@ BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
-BuildRequires:  waf
+BuildRequires:  waf-python3
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
@@ -173,6 +173,10 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Sep 22 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-13.20190922.gitb6def65
+- Update to 20190922 snapshot
+- Switch to waf-python3
+
 * Tue Sep 10 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-12.20190814.gitcd7bcb9
 - Adjust epel8 build requires
 

@@ -5,7 +5,7 @@
 
 Name:           mpv
 Version:        0.29.1
-Release:        14%{?gitrelease}%{?dist}
+Release:        15%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -77,6 +77,7 @@ BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
 BuildRequires:  pkgconfig(zimg)
+# Requires zimg version >= 2.9
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  /usr/bin/rst2man
 BuildRequires:  perl(Math::BigInt)
@@ -171,6 +172,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Sep 23 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-15.20190922.gitb6def65
+- Rebuild with newer zimg
+
 * Sun Sep 22 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-14.20190922.gitb6def65
 - Remove BuildRequires dvdread and libv4l2
 - Add BuildRequires zimg and caca

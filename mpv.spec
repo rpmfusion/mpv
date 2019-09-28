@@ -1,11 +1,11 @@
-%global commit cd7bcb9d0c12ee4e252024235cc8bbb395960118
-%global gitdate 20190814
+%global commit b6def652a4b0db0f3514a44fec08f4be66187f3b
+%global gitdate 20190922
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global gitrelease .%{gitdate}.git%{shortcommit}
 
 Name:           mpv
 Version:        0.29.1
-Release:        12%{?gitrelease}%{?dist}
+Release:        15%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -21,8 +21,8 @@ Patch1:         ppc_fix.patch
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
 BuildRequires:  gcc
+BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dvdnav)
-BuildRequires:  pkgconfig(dvdread)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
 BuildRequires:  pkgconfig(libavutil) >= 56.27.100
@@ -57,14 +57,13 @@ BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
-BuildRequires:  pkgconfig(libv4l2)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
-BuildRequires:  waf
+BuildRequires:  waf-python3
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
 BuildRequires:  pkgconfig(wayland-egl)
@@ -77,6 +76,8 @@ BuildRequires:  pkgconfig(xkbcommon)
 BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(xv)
+BuildRequires:  pkgconfig(zimg)
+# Requires zimg version >= 2.9
 BuildRequires:  pkgconfig(zlib)
 BuildRequires:  /usr/bin/rst2man
 BuildRequires:  perl(Math::BigInt)
@@ -136,11 +137,9 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --enable-sdl2 \
     --enable-libarchive \
     --enable-libsmbclient \
-    --enable-dvdread \
     --enable-dvdnav \
     --enable-cdda \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \
-    --enable-tv \
     --enable-dvbin
     
 
@@ -173,6 +172,17 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Sep 23 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-15.20190922.gitb6def65
+- Rebuild with newer zimg
+
+* Sun Sep 22 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-14.20190922.gitb6def65
+- Remove BuildRequires dvdread and libv4l2
+- Add BuildRequires zimg and caca
+
+* Sun Sep 22 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-13.20190922.gitb6def65
+- Update to 20190922 snapshot
+- Switch to waf-python3
+
 * Tue Sep 10 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-12.20190814.gitcd7bcb9
 - Adjust epel8 build requires
 

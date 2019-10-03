@@ -1,11 +1,11 @@
-%global commit b6def652a4b0db0f3514a44fec08f4be66187f3b
-%global gitdate 20190922
+%global commit defc8f359c5e4bb666e8ad1d4a097a8ac66cc1e2
+%global gitdate 20191003
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global gitrelease .%{gitdate}.git%{shortcommit}
 
 Name:           mpv
 Version:        0.29.1
-Release:        15%{?gitrelease}%{?dist}
+Release:        16%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -172,6 +172,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Oct 03 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-16.20191003.gitdefc8f3
+- Update to 20191003 snapshot
+
 * Mon Sep 23 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-15.20190922.gitb6def65
 - Rebuild with newer zimg
 

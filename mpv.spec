@@ -5,7 +5,7 @@
 
 Name:           mpv
 Version:        0.29.1
-Release:        17%{?gitrelease}%{?dist}
+Release:        18%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -139,6 +139,7 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --enable-libsmbclient \
     --enable-dvdnav \
     --enable-cdda \
+    --enable-html-build \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \
     --enable-dvbin
     
@@ -173,6 +174,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Oct 13 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-18.20191011.gita85fa2d
+- Enable html doc as it's easier to read than the man page
+
 * Sat Oct 12 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-17.20191011.gita85fa2d
 - Update to 20191011 snapshot
 

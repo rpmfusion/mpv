@@ -20,7 +20,7 @@ BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  pkgconfig(libavutil) >= 56.27.100
+BuildRequires:  pkgconfig(libavutil) >= 56.12.100
 BuildRequires:  pkgconfig(libavcodec) >= 58.16.100
 BuildRequires:  pkgconfig(libavformat) >= 58.9.100
 BuildRequires:  pkgconfig(libswscale) >= 5.0.101

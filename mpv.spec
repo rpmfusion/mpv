@@ -54,7 +54,11 @@ BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
+%if 0%{?fedora} < 31
+BuildRequires:  pkgconfig(lua-5.1)
+%else
 BuildRequires:  pkgconfig(luajit)
+%endif
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)

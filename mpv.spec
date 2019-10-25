@@ -1,15 +1,10 @@
-%global commit b6def652a4b0db0f3514a44fec08f4be66187f3b
-%global gitdate 20190922
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global gitrelease .%{gitdate}.git%{shortcommit}
-
 Name:           mpv
-Version:        0.29.1
-Release:        15%{?gitrelease}%{?dist}
+Version:        0.30.0
+Release:        1%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
-Source0:        https://github.com/mpv-player/mpv/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Source0:        https://github.com/mpv-player/mpv/archive/v%{version}/%{name}-%{version}.tar.gz
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -139,6 +134,7 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --enable-libsmbclient \
     --enable-dvdnav \
     --enable-cdda \
+    --enable-html-build \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \
     --enable-dvbin
     
@@ -158,6 +154,7 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
+%{_datadir}/zsh/site-functions/_mpv
 %{_mandir}/man1/%{name}.*
 %dir %{_sysconfdir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
@@ -172,6 +169,21 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Fri Oct 25 2019 Leigh Scott <leigh123linux@gmail.com> - 0.30.0-1
+- Update to 0.30.0
+
+* Fri Oct 25 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-19.20191025.gite67386e
+- Update to 20191025 snapshot
+
+* Sun Oct 13 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-18.20191011.gita85fa2d
+- Enable html doc as it's easier to read than the man page
+
+* Sat Oct 12 2019 Leigh Scott <leigh123linux@gmail.com> - 0.29.1-17.20191011.gita85fa2d
+- Update to 20191011 snapshot
+
+* Thu Oct 03 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-16.20191003.gitdefc8f3
+- Update to 20191003 snapshot
+
 * Mon Sep 23 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.29.1-15.20190922.gitb6def65
 - Rebuild with newer zimg
 

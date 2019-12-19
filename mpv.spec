@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.30.0
-Release:        2%{?gitrelease}%{?dist}
+Release:        3%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -173,6 +173,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Thu Dec 19 2019 Leigh Scott <leigh123linux@gmail.com> - 0.30.0-3
+- Rebuild for new libplacebo version
+
 * Mon Nov 18 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.30.0-2
 - rebuild for libdvdread ABI bump
 

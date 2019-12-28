@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.30.0
+Version:        0.31.0
 Release:        1%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
@@ -20,7 +20,7 @@ BuildRequires:  pkgconfig(caca)
 BuildRequires:  pkgconfig(dvdnav)
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(enca)
-BuildRequires:  pkgconfig(libavutil) >= 56.27.100
+BuildRequires:  pkgconfig(libavutil) >= 56.12.100
 BuildRequires:  pkgconfig(libavcodec) >= 58.16.100
 BuildRequires:  pkgconfig(libavformat) >= 58.9.100
 BuildRequires:  pkgconfig(libswscale) >= 5.0.101
@@ -54,7 +54,11 @@ BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
+%if 0%{?fedora} < 31
+BuildRequires:  pkgconfig(lua-5.1)
+%else
 BuildRequires:  pkgconfig(luajit)
+%endif
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
@@ -169,6 +173,15 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Dec 28 2019 Leigh Scott <leigh123linux@gmail.com> - 0.31.0-1
+- Update to 0.31.0
+
+* Thu Dec 19 2019 Leigh Scott <leigh123linux@gmail.com> - 0.30.0-3
+- Rebuild for new libplacebo version
+
+* Mon Nov 18 2019 Leigh Scott <leigh123linux@googlemail.com> - 0.30.0-2
+- rebuild for libdvdread ABI bump
+
 * Fri Oct 25 2019 Leigh Scott <leigh123linux@gmail.com> - 0.30.0-1
 - Update to 0.30.0
 

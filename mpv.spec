@@ -1,5 +1,5 @@
 Name:           mpv
-Version:        0.31.0
+Version:        0.32.0
 Release:        1%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
@@ -173,6 +173,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Jan 26 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-1
+- Update to 0.32.0
+
 * Sat Dec 28 2019 Leigh Scott <leigh123linux@gmail.com> - 0.31.0-1
 - Update to 0.31.0
 

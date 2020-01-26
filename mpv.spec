@@ -44,7 +44,7 @@ BuildRequires:  pkgconfig(vulkan)
 %endif
 %endif
 BuildRequires:  pkgconfig(lcms2)
-%if 0%{?fedora}  > 30|| 0%{?rhel} > 8
+%if 0%{?fedora} > 30 || 0%{?rhel} > 8
 BuildRequires:  pkgconfig(libarchive) >= 3.4.0
 %endif
 BuildRequires:  pkgconfig(libass)
@@ -136,7 +136,7 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --disable-build-date \
     --enable-libmpv-shared \
     --enable-sdl2 \
-%if 0%{?fedora}  > 30|| 0%{?rhel} > 8
+%if 0%{?fedora} > 30 || 0%{?rhel} > 8
     --enable-libarchive \
 %endif
     --enable-libsmbclient \

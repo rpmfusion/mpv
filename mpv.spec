@@ -157,6 +157,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %license LICENSE.GPL LICENSE.LGPL Copyright
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
+%dir %{_datadir}/bash-completion/
+%dir %{_datadir}/bash-completion/completions/
+%{_datadir}/bash-completion/completions/%{name}
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
 %{_datadir}/zsh/site-functions/_mpv
 %{_mandir}/man1/%{name}.*

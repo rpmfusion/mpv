@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.32.0
-Release:        1%{?gitrelease}%{?dist}
+Release:        2%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -44,7 +44,9 @@ BuildRequires:  pkgconfig(vulkan)
 %endif
 %endif
 BuildRequires:  pkgconfig(lcms2)
-BuildRequires:  pkgconfig(libarchive)
+%if 0%{?fedora}  > 30|| 0%{?rhel} > 8
+BuildRequires:  pkgconfig(libarchive) >= 3.4.0
+%endif
 BuildRequires:  pkgconfig(libass)
 BuildRequires:  pkgconfig(libbluray)
 BuildRequires:  pkgconfig(libcdio)
@@ -134,7 +136,9 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --disable-build-date \
     --enable-libmpv-shared \
     --enable-sdl2 \
+%if 0%{?fedora}  > 30|| 0%{?rhel} > 8
     --enable-libarchive \
+%endif
     --enable-libsmbclient \
     --enable-dvdnav \
     --enable-cdda \
@@ -176,6 +180,10 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Jan 26 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-2
+- Drop libarchive support for f30 and el8, supporting 0.31.0 for the
+  next decade isn't an option
+
 * Sun Jan 26 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-1
 - Update to 0.32.0
 

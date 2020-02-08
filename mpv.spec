@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.32.0
-Release:        2%{?gitrelease}%{?dist}
+Release:        3%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -180,6 +180,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Feb 08 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-3
+- Rebuild for new libplacebo version
+
 * Sun Jan 26 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-2
 - Drop libarchive support for f30 and el8, supporting 0.31.0 for the
   next decade isn't an option

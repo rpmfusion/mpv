@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.32.0
-Release:        4%{?gitrelease}%{?dist}
+Release:        5%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -180,6 +180,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Fri Apr 10 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-5
+- Rebuild for new libcdio version
+
 * Sat Feb 22 2020 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 0.32.0-4
 - Rebuild for ffmpeg-4.3 git
 

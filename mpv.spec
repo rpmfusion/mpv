@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.32.0
-Release:        5%{?gitrelease}%{?dist}
+Release:        6%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -64,6 +64,9 @@ BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
+%if 0%{?fedora} || 0%{?rhel} > 7
+BuildRequires:  pkgconfig(vapoursynth)
+%endif
 BuildRequires:  waf-python3
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-cursor)
@@ -180,6 +183,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Wed Jun 24 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-6
+- Enable vapoursynth (rfbz#5681)
+
 * Fri Apr 10 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-5
 - Rebuild for new libcdio version
 

@@ -64,8 +64,10 @@ BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
+%ifarch x86_64
 %if 0%{?fedora} || 0%{?rhel} > 7
 BuildRequires:  pkgconfig(vapoursynth)
+%endif
 %endif
 BuildRequires:  waf-python3
 BuildRequires:  pkgconfig(wayland-client)

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.32.0
-Release:        6%{?gitrelease}%{?dist}
+Release:        7%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -185,6 +185,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Jun 30 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-7
+- rebuilt
+
 * Wed Jun 24 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-6
 - Enable vapoursynth (rfbz#5681)
 

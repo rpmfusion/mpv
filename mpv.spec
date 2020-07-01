@@ -56,8 +56,8 @@ BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
-%if 0%{?fedora} < 31
-BuildRequires:  pkgconfig(lua-5.1)
+%if 0%{?fedora}
+BuildRequires:  pkgconfig(lua) 
 %else
 BuildRequires:  pkgconfig(luajit)
 %endif
@@ -186,7 +186,7 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 
 %changelog
 * Tue Jun 30 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-7
-- rebuilt
+- Rebuilt for new libplacebo
 
 * Wed Jun 24 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-6
 - Enable vapoursynth (rfbz#5681)

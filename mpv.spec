@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.32.0
-Release:        7%{?gitrelease}%{?dist}
+Release:        8%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -56,11 +56,7 @@ BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
-%if 0%{?fedora}
-BuildRequires:  pkgconfig(lua) 
-%else
 BuildRequires:  pkgconfig(luajit)
-%endif
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
@@ -185,6 +181,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sat Jul 04 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-8
+- Fix lua mistake
+
 * Tue Jun 30 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-7
 - Rebuilt for new libplacebo
 

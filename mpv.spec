@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.32.0
-Release:        10%{?gitrelease}%{?dist}
+Version:        0.33.0
+Release:        1%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -58,7 +58,6 @@ BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
 %ifarch x86_64
 %if 0%{?fedora} || 0%{?rhel} > 7
@@ -140,7 +139,6 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
 %if 0%{?fedora} > 30 || 0%{?rhel} > 8
     --enable-libarchive \
 %endif
-    --enable-libsmbclient \
     --enable-dvdnav \
     --enable-cdda \
     --enable-html-build \
@@ -181,6 +179,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Sun Nov 22 2020 Leigh Scott <leigh123linux@gmail.com> - 0.33.0-1
+- Update to 0.33.0
+
 * Wed Oct 21 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-10
 - Rebuild for new libdvdread
 

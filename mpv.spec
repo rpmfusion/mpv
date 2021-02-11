@@ -1,10 +1,12 @@
+%global giturl https://github.com/mpv-player/mpv
+
 Name:           mpv
 Version:        0.33.0
 Release:        4%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
-Source0:        https://github.com/mpv-player/mpv/archive/v%{version}/%{name}-%{version}.tar.gz
+Source0:        %{giturl}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 # set defaults for Fedora
 Patch0:         %{name}-config.patch
@@ -12,6 +14,9 @@ Patch0:         %{name}-config.patch
 # Fix ppc as upstream refuse to fix the issue
 # https://github.com/mpv-player/mpv/issues/3776
 Patch1:         ppc_fix.patch
+
+# Patch for new libplacebo API
+Patch2:         %{giturl}/commit/7c4465cefb27d4e0d07535d368febdf77b579566.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils

@@ -2,7 +2,7 @@
 
 Name:           mpv
 Version:        0.33.1
-Release:        1%{?gitrelease}%{?dist}
+Release:        2%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -184,6 +184,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Tue Aug 03 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.33.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Mon Apr 05 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.1-1
 - Update to 0.33.1
 

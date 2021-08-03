@@ -138,6 +138,10 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --docdir=%{_docdir}/%{name} \
     --confdir=%{_sysconfdir}/%{name} \
     --disable-build-date \
+%if 0%{?fedora} > 34
+# kernel-headers-5.14 has dropped /usr/include/linux/dvb/video.h
+    --enable-dvbin \
+%endif
     --enable-libmpv-shared \
     --enable-sdl2 \
 %if 0%{?fedora} > 30 || 0%{?rhel} > 8
@@ -147,8 +151,7 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
     --enable-cdda \
     --enable-html-build \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \
-    --enable-gl-x11 \
-    --enable-dvbin
+    --enable-gl-x11
     
 
 %{_bindir}/waf -v build %{?_smp_mflags}

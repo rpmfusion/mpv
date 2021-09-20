@@ -2,7 +2,7 @@
 
 Name:           mpv
 Version:        0.33.1
-Release:        3%{?gitrelease}%{?dist}
+Release:        4%{?gitrelease}%{?dist}
 Summary:        Movie player playing most video formats and DVDs
 License:        GPLv2+ and LGPLv2+
 URL:            http://mpv.io/
@@ -60,7 +60,7 @@ BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
 BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(luajit)
+BuildRequires:  pkgconfig(lua-5.1)
 BuildRequires:  pkgconfig(sdl2)
 BuildRequires:  pkgconfig(vdpau)
 %ifarch x86_64
@@ -186,6 +186,9 @@ install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}
 %{_libdir}/pkgconfig/mpv.pc
 
 %changelog
+* Mon Sep 20 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.1-4
+- rebuilt
+
 * Thu Aug 19 2021 Nicolas Chauvet <kwizart@gmail.com> - 0.33.1-3
 - rebuilt
 

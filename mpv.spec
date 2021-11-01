@@ -1,22 +1,15 @@
-%global giturl https://github.com/mpv-player/mpv
-
 Name:           mpv
-Version:        0.33.1
-Release:        4%{?gitrelease}%{?dist}
-Summary:        Movie player playing most video formats and DVDs
-License:        GPLv2+ and LGPLv2+
-URL:            http://mpv.io/
-Source0:        %{giturl}/archive/v%{version}/%{name}-%{version}.tar.gz
+Version:        0.34.0
+Release:        1%{?dist}
 
-# set defaults for Fedora
-Patch0:         %{name}-config.patch
+License:        GPLv2+ and LGPLv2+
+Summary:        Movie player playing most video formats and DVDs
+URL:            https://%{name}.io/
+Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 # Fix ppc as upstream refuse to fix the issue
 # https://github.com/mpv-player/mpv/issues/3776
 Patch1:         ppc_fix.patch
-
-# Patch for new libplacebo API
-Patch2:         %{giturl}/commit/7c4465cefb27d4e0d07535d368febdf77b579566.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -88,16 +81,13 @@ BuildRequires:  /usr/bin/rst2man
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)
-
-%ifarch armv7hl armv7hnl
-%{?_with_rpi:
-BuildRequires:  raspberrypi-vc-devel
-}
+%ifarch %{arm}
+%{?_with_rpi:BuildRequires: raspberrypi-vc-devel}
 %endif
 
 # Obsoletes older ci/cd
-Obsoletes:  mpv-master < %{version}-100
-Provides: mpv-master = %{version}-100
+Obsoletes:      %{name}-master < %{version}-100
+Provides:       %{name}-master = %{version}-100
 
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
@@ -117,16 +107,15 @@ This package contains the dynamic library libmpv, which provides access to Mpv.
 
 %package libs-devel
 Summary: Development package for libmpv
-Requires: mpv-libs%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description libs-devel
 Libmpv development header files and libraries.
 
 %prep
-%autosetup -p1 -n mpv-%{?commit}%{?!commit:%{version}}
-
-sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.standard_includes.append('$(pkgconf --variable=includedir libavcodec)')|" wscript
-
+%autosetup -p1
+sed -e "s|/usr/local/etc|%{_sysconfdir}/%{name}|" -i etc/%{name}.conf
+sed -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.standard_includes.append('$(pkgconf --variable=includedir libavcodec)')|" -i wscript
 
 %build
 %set_build_flags
@@ -151,41 +140,45 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
 %if 0%{?fedora} < 35
     --enable-dvbin
 %endif
-
-
 %{_bindir}/waf -v build %{?_smp_mflags}
 
 %install
 %{_bindir}/waf install --destdir=%{buildroot}
 
+%check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
-install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}/
 
 %files
 %docdir %{_docdir}/%{name}/
-%{_docdir}/%{name}/
+%doc README.md etc/input.conf etc/%{name}.conf
 %license LICENSE.GPL LICENSE.LGPL Copyright
+%{_docdir}/%{name}/
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/%{name}
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
-%{_datadir}/zsh/site-functions/_mpv
+%dir %{_datadir}/zsh/
+%dir %{_datadir}/zsh/site-functions/
+%{_datadir}/zsh/site-functions/_%{name}
 %{_mandir}/man1/%{name}.*
 %dir %{_sysconfdir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
 %files libs
 %license LICENSE.GPL LICENSE.LGPL Copyright
-%{_libdir}/libmpv.so.*
+%{_libdir}/lib%{name}.so.*
 
 %files libs-devel
 %{_includedir}/%{name}/
-%{_libdir}/libmpv.so
-%{_libdir}/pkgconfig/mpv.pc
+%{_libdir}/lib%{name}.so
+%{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Mon Nov 01 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.0-1
+- Updated to version 0.34.0.
+
 * Mon Sep 20 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.1-4
 - rebuilt
 

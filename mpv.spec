@@ -136,10 +136,10 @@ sed -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.sta
     --enable-cdda \
     --enable-html-build \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \
-    --enable-gl-x11 \
 %if 0%{?fedora} < 35
-    --enable-dvbin
+    --enable-dvbin \
 %endif
+    --enable-gl-x11
 %{_bindir}/waf -v build %{?_smp_mflags}
 
 %install

@@ -91,6 +91,7 @@ Provides:       %{name}-master = %{version}-100
 
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
+Recommends:     (yt-dlp or youtube-dl)
 
 %description
 Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety

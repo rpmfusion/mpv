@@ -1,13 +1,11 @@
 Name:           mpv
-Version:        0.32.0
-Release:        6%{?gitrelease}%{?dist}
-Summary:        Movie player playing most video formats and DVDs
-License:        GPLv2+ and LGPLv2+
-URL:            http://mpv.io/
-Source0:        https://github.com/mpv-player/mpv/archive/v%{version}/%{name}-%{version}.tar.gz
+Version:        0.34.0
+Release:        2%{?dist}
 
-# set defaults for Fedora
-Patch0:         %{name}-config.patch
+License:        GPLv2+ and LGPLv2+
+Summary:        Movie player playing most video formats and DVDs
+URL:            https://%{name}.io/
+Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 # Fix ppc as upstream refuse to fix the issue
 # https://github.com/mpv-player/mpv/issues/3776
@@ -54,15 +52,9 @@ BuildRequires:  pkgconfig(libcdio_paranoia)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libjpeg)
 BuildRequires:  pkgconfig(libpulse)
-BuildRequires:  pkgconfig(libquvi-0.9)
 BuildRequires:  pkgconfig(libva)
-%if 0%{?fedora} < 31
 BuildRequires:  pkgconfig(lua-5.1)
-%else
-BuildRequires:  pkgconfig(luajit)
-%endif
 BuildRequires:  pkgconfig(sdl2)
-BuildRequires:  pkgconfig(smbclient)
 BuildRequires:  pkgconfig(vdpau)
 %ifarch x86_64
 %if 0%{?fedora} || 0%{?rhel} > 7
@@ -89,19 +81,17 @@ BuildRequires:  /usr/bin/rst2man
 BuildRequires:  perl(Math::BigInt)
 BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)
-
-%ifarch armv7hl armv7hnl
-%{?_with_rpi:
-BuildRequires:  raspberrypi-vc-devel
-}
+%ifarch %{arm}
+%{?_with_rpi:BuildRequires: raspberrypi-vc-devel}
 %endif
 
 # Obsoletes older ci/cd
-Obsoletes:  mpv-master < %{version}-100
-Provides: mpv-master = %{version}-100
+Obsoletes:      %{name}-master < %{version}-100
+Provides:       %{name}-master = %{version}-100
 
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
+Recommends:     (yt-dlp or youtube-dl)
 
 %description
 Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety
@@ -118,16 +108,15 @@ This package contains the dynamic library libmpv, which provides access to Mpv.
 
 %package libs-devel
 Summary: Development package for libmpv
-Requires: mpv-libs%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description libs-devel
 Libmpv development header files and libraries.
 
 %prep
-%autosetup -p1 -n mpv-%{?commit}%{?!commit:%{version}}
-
-sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.standard_includes.append('$(pkgconf --variable=includedir libavcodec)')|" wscript
-
+%autosetup -p1
+sed -e "s|/usr/local/etc|%{_sysconfdir}/%{name}|" -i etc/%{name}.conf
+sed -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.standard_includes.append('$(pkgconf --variable=includedir libavcodec)')|" -i wscript
 
 %build
 %set_build_flags
@@ -144,47 +133,96 @@ sed -i -e "s|c_preproc.standard_includes.append('/usr/local/include')|c_preproc.
 %if 0%{?fedora} > 30 || 0%{?rhel} > 8
     --enable-libarchive \
 %endif
-    --enable-libsmbclient \
     --enable-dvdnav \
     --enable-cdda \
     --enable-html-build \
 %{?_with_rpi:--enable-rpi --disable-vaapi} \
-    --enable-dvbin
-    
-
+    --enable-dvbin \
+    --enable-gl-x11
 %{_bindir}/waf -v build %{?_smp_mflags}
 
 %install
 %{_bindir}/waf install --destdir=%{buildroot}
 
+%check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
-install -Dpm 644 README.md etc/input.conf etc/mpv.conf -t %{buildroot}%{_docdir}/%{name}/
 
 %files
 %docdir %{_docdir}/%{name}/
-%{_docdir}/%{name}/
+%doc README.md etc/input.conf etc/%{name}.conf
 %license LICENSE.GPL LICENSE.LGPL Copyright
+%{_docdir}/%{name}/
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %dir %{_datadir}/bash-completion/
 %dir %{_datadir}/bash-completion/completions/
 %{_datadir}/bash-completion/completions/%{name}
 %{_datadir}/icons/hicolor/*/apps/%{name}*.*
-%{_datadir}/zsh/site-functions/_mpv
+%dir %{_datadir}/zsh/
+%dir %{_datadir}/zsh/site-functions/
+%{_datadir}/zsh/site-functions/_%{name}
 %{_mandir}/man1/%{name}.*
 %dir %{_sysconfdir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/encoding-profiles.conf
 
 %files libs
 %license LICENSE.GPL LICENSE.LGPL Copyright
-%{_libdir}/libmpv.so.*
+%{_libdir}/lib%{name}.so.*
 
 %files libs-devel
 %{_includedir}/%{name}/
-%{_libdir}/libmpv.so
-%{_libdir}/pkgconfig/mpv.pc
+%{_libdir}/lib%{name}.so
+%{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Tue Nov 09 2021 Leigh Scott <leigh123linux@gmail.com> - 0.34.0-2
+- Rebuilt for new ffmpeg snapshot
+
+* Mon Nov 01 2021 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.0-1
+- Updated to version 0.34.0.
+
+* Mon Sep 20 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.1-4
+- rebuilt
+
+* Thu Aug 19 2021 Nicolas Chauvet <kwizart@gmail.com> - 0.33.1-3
+- rebuilt
+
+* Tue Aug 03 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.33.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Mon Apr 05 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.1-1
+- Update to 0.33.1
+
+* Fri Apr 02 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.0-6
+- rebuilt
+
+* Wed Mar 24 2021 Leigh Scott <leigh123linux@gmail.com> - 0.33.0-5
+- rebuilt
+
+* Thu Feb 11 2021 Nicolas Chauvet <kwizart@gmail.com> - 0.33.0-4
+- Rebuilt
+
+* Wed Feb 03 2021 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.33.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
+* Thu Dec 31 2020 Leigh Scott <leigh123linux@gmail.com> - 0.33.0-2
+- Rebuilt for new ffmpeg snapshot
+
+* Sun Nov 22 2020 Leigh Scott <leigh123linux@gmail.com> - 0.33.0-1
+- Update to 0.33.0
+
+* Wed Oct 21 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-10
+- Rebuild for new libdvdread
+
+* Tue Aug 18 2020 RPM Fusion Release Engineering <leigh123linux@gmail.com> - 0.32.0-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Sat Jul 04 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-8
+- Fix lua mistake
+
+* Tue Jun 30 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-7
+- Rebuilt for new libplacebo
+
 * Wed Jun 24 2020 Leigh Scott <leigh123linux@gmail.com> - 0.32.0-6
 - Enable vapoursynth (rfbz#5681)
 

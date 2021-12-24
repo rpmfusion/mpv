@@ -91,7 +91,12 @@ Provides:       %{name}-master = %{version}-100
 
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
+%if 0%{?fedora}
+# Boolean dependencies are only fedora
 Recommends:     (yt-dlp or youtube-dl)
+%else
+Recommends:     youtube-dl
+%endif
 
 %description
 Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety

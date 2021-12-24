@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.34.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -91,7 +91,12 @@ Provides:       %{name}-master = %{version}-100
 
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
+%if 0%{?fedora}
+# Boolean dependencies are only fedora
 Recommends:     (yt-dlp or youtube-dl)
+%else
+Recommends:     youtube-dl
+%endif
 
 %description
 Mpv is a movie player based on MPlayer and mplayer2. It supports a wide variety
@@ -175,6 +180,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Fri Dec 24 2021 Leigh Scott <leigh123linux@gmail.com> - 0.34.0-3
+- Boolean dependencies are only fedora
+
 * Tue Nov 09 2021 Leigh Scott <leigh123linux@gmail.com> - 0.34.0-2
 - Rebuilt for new ffmpeg snapshot
 

@@ -1,6 +1,6 @@
 Name:           mpv
-Version:        0.34.0
-Release:        3%{?dist}
+Version:        0.34.1
+Release:        1%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -180,6 +180,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Mon Jan 03 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-1
+- Updated to version 0.34.1.
+
 * Fri Dec 24 2021 Leigh Scott <leigh123linux@gmail.com> - 0.34.0-3
 - Boolean dependencies are only fedora
 

@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.34.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -92,8 +92,7 @@ Provides:       %{name}-master = %{version}-100
 Requires:       hicolor-icon-theme
 Provides:       mplayer-backend
 %if 0%{?fedora}
-# Boolean dependencies are only fedora
-Recommends:     (yt-dlp or youtube-dl)
+Recommends:     yt-dlp
 %else
 Recommends:     youtube-dl
 %endif
@@ -180,6 +179,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Mon Jan 10 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-2
+- Removed boolean dependencies.
+
 * Mon Jan 03 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-1
 - Updated to version 0.34.1.
 

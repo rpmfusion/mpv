@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.34.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -179,6 +179,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Fri Feb 04 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-3
+- Rebuild for new libvpx
+
 * Mon Jan 10 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-2
 - Removed boolean dependencies.
 

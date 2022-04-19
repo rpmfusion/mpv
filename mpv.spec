@@ -1,15 +1,11 @@
 Name:           mpv
 Version:        0.34.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
 URL:            https://%{name}.io/
 Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
-
-# Fix ppc as upstream refuse to fix the issue
-# https://github.com/mpv-player/mpv/issues/3776
-Patch1:         ppc_fix.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -83,6 +79,12 @@ BuildRequires:  perl(Math::BigRat)
 BuildRequires:  perl(Encode)
 %ifarch %{arm}
 %{?_with_rpi:BuildRequires: raspberrypi-vc-devel}
+%endif
+
+# Fedora now has a stripped ffmpeg. Make sure we're using the full version.
+%if 0%{?fedora} && 0%{?fedora} >= 36
+BuildRequires: ffmpeg-devel
+Requires: ffmpeg-libs%{?_isa}
 %endif
 
 # Obsoletes older ci/cd
@@ -179,6 +181,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Tue Apr 19 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-5
+- Make sure we're using the full ffmpeg-libs version.
+- Removed no longer required patch.
+
 * Fri Mar 04 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-4
 - Rebuild for new vapoursynth
 

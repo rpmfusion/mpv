@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.34.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -181,6 +181,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Fri Jun 17 2022 Nicolas Chauvet <kwizart@gmail.com> - 0.34.1-6
+- rebuilt
+
 * Tue Apr 19 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-5
 - Make sure we're using the full ffmpeg-libs version.
 - Removed no longer required patch.

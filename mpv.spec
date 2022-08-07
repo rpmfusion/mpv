@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.34.1
-Release:        8%{?dist}
+Release:        9%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -181,6 +181,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Sun Aug 07 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 0.34.1-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
+  5.1
+
 * Fri Jul 22 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-8
 - Rebuild for new ffmpeg
 

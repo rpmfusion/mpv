@@ -1,6 +1,6 @@
 Name:           mpv
 Version:        0.34.1
-Release:        9%{?dist}
+Release:        10%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
@@ -81,11 +81,8 @@ BuildRequires:  perl(Encode)
 %{?_with_rpi:BuildRequires: raspberrypi-vc-devel}
 %endif
 
-# Fedora now has a stripped ffmpeg. Make sure we're using the full version.
-%if 0%{?fedora} && 0%{?fedora} >= 36
 BuildRequires: ffmpeg-devel
-Requires: ffmpeg-libs%{?_isa}
-%endif
+Requires:      ffmpeg-libs%{?_isa}
 
 # Obsoletes older ci/cd
 Obsoletes:      %{name}-master < %{version}-100
@@ -107,7 +104,8 @@ than disk files. Depending on platform, a variety of different video and audio
 output methods are supported.
 
 %package libs
-Summary: Dynamic library for Mpv frontends 
+Summary:  Dynamic library for Mpv frontends 
+Requires: ffmpeg-libs%{?_isa}
 
 %description libs
 This package contains the dynamic library libmpv, which provides access to Mpv.
@@ -181,6 +179,9 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Sun Sep 04 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-10
+- Add requires ffmpeg-libs
+
 * Sun Aug 07 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 0.34.1-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
   5.1

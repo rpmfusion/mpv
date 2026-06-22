@@ -1,15 +1,11 @@
 Name:           mpv
 Version:        0.34.1
-Release:        2%{?dist}
+Release:        10%{?dist}
 
 License:        GPLv2+ and LGPLv2+
 Summary:        Movie player playing most video formats and DVDs
 URL:            https://%{name}.io/
 Source0:        https://github.com/%{name}-player/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
-
-# Fix ppc as upstream refuse to fix the issue
-# https://github.com/mpv-player/mpv/issues/3776
-Patch1:         ppc_fix.patch
 
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  desktop-file-utils
@@ -85,6 +81,9 @@ BuildRequires:  perl(Encode)
 %{?_with_rpi:BuildRequires: raspberrypi-vc-devel}
 %endif
 
+BuildRequires: ffmpeg-devel
+Requires:      ffmpeg-libs%{?_isa}
+
 # Obsoletes older ci/cd
 Obsoletes:      %{name}-master < %{version}-100
 Provides:       %{name}-master = %{version}-100
@@ -105,7 +104,8 @@ than disk files. Depending on platform, a variety of different video and audio
 output methods are supported.
 
 %package libs
-Summary: Dynamic library for Mpv frontends 
+Summary:  Dynamic library for Mpv frontends 
+Requires: ffmpeg-libs%{?_isa}
 
 %description libs
 This package contains the dynamic library libmpv, which provides access to Mpv.
@@ -179,6 +179,32 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_libdir}/pkgconfig/%{name}.pc
 
 %changelog
+* Sun Sep 04 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-10
+- Add requires ffmpeg-libs
+
+* Sun Aug 07 2022 RPM Fusion Release Engineering <sergiomb@rpmfusion.org> - 0.34.1-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild and ffmpeg
+  5.1
+
+* Fri Jul 22 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-8
+- Rebuild for new ffmpeg
+
+* Sat Jul 09 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-7
+- Rebuilt due to libplacebo update.
+
+* Fri Jun 17 2022 Nicolas Chauvet <kwizart@gmail.com> - 0.34.1-6
+- rebuilt
+
+* Tue Apr 19 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-5
+- Make sure we're using the full ffmpeg-libs version.
+- Removed no longer required patch.
+
+* Fri Mar 04 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-4
+- Rebuild for new vapoursynth
+
+* Fri Feb 04 2022 Leigh Scott <leigh123linux@gmail.com> - 0.34.1-3
+- Rebuild for new libvpx
+
 * Mon Jan 10 2022 Vitaly Zaitsev <vitaly@easycoding.org> - 0.34.1-2
 - Removed boolean dependencies.
 
